@@ -1,0 +1,44 @@
+.masonry {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    scrollbar-gutter: stable;
+
+    &.scroll-thin {
+        scrollbar-width: thin;
+    }
+
+    .masonry-columns {
+        display: flex;
+        width: 100%;
+        box-sizing: border-box;
+
+        .masonry-column {
+            position: relative;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+        .masonry-item {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            overflow: hidden;
+
+            transition: height .1s ease-in-out;
+        }
+    }
+
+    .masonry-footer {
+        width: 100%;
+    }
+}
