@@ -27,6 +27,7 @@
     "devDependencies": {
         "@rspress/plugin-preview": "^1.46.1",
         "@types/lodash-es": "4.17.12",
+        "@types/node": "^25.9.3",
         "@types/react": "19.1.6",
         "@types/react-dom": "19.1.5",
         "rspress": "^1.46.1"
