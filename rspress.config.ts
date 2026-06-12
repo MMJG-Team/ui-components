@@ -39,6 +39,14 @@ export default defineConfig({
                 {
                     text: '模块',
                     items: [
+                        {
+                            text: 'UniqueRequest 唯一请求管理',
+                            link: '/modules/UniqueRequest/',
+                        },
+                        {
+                            text: 'VerticalViewportMonitor 视口监控',
+                            link: '/modules/VerticalViewportMonitor/',
+                        }
                     ],
                 }
             ],

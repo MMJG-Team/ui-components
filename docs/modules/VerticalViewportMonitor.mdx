@@ -1,0 +1,290 @@
+# VerticalViewportMonitor 纵向视口监控器
+
+## 概述
+
+`VerticalViewportMonitor` 是一个用于监控元素在垂直方向上进入或离开视口的工具类。它支持多个元素的批量监控，提供进入和离开视口的回调通知，并支持节流优化以提升性能。
+
+## 导入
+
+```tsx
+import { VerticalViewportMonitor } from "ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useEffect, useRef } from "react";
+import { VerticalViewportMonitor } from "ui-components";
+
+const ViewportDemo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const elementRefs = useRef<HTMLDivElement[]>([]);
+    const monitorRef = useRef<VerticalViewportMonitor | null>(null);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const elements = elementRefs.current.filter((el) => el);
+        monitorRef.current = new VerticalViewportMonitor(elements, {
+            root: containerRef.current,
+            onEnter: (element) => {
+                element.style.backgroundColor = "#4CAF50";
+                element.style.color = "#fff";
+            },
+            onLeave: (element, direction) => {
+                element.style.backgroundColor = "#f0f0f0";
+                element.style.color = "#333";
+            },
+            throttleDelay: 100,
+        });
+
+        return () => {
+            monitorRef.current?.destroy();
+        };
+    }, []);
+
+    return (
+        <div
+            ref={containerRef}
+            style={{
+                height: "300px",
+                overflow: "auto",
+                border: "1px solid #ccc",
+                padding: "10px",
+            }}
+        >
+            {Array.from({ length: 10 }).map((_, index) => (
+                <div
+                    key={index}
+                    ref={(el) => {
+                        if (el) elementRefs.current[index] = el;
+                    }}
+                    style={{
+                        height: "100px",
+                        marginBottom: "10px",
+                        padding: "20px",
+                        backgroundColor: "#f0f0f0",
+                        textAlign: "center",
+                        transition: "all 0.3s ease",
+                    }}
+                    data-index={index}
+                >
+                    元素 {index + 1}
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default ViewportDemo;
+```
+
+### 动态添加/移除元素
+
+```tsx preview
+import React, { useEffect, useRef, useState } from "react";
+import { VerticalViewportMonitor } from "ui-components";
+
+const DynamicMonitorDemo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const monitorRef = useRef<VerticalViewportMonitor | null>(null);
+    const [elements, setElements] = useState<number[]>([1, 2, 3]);
+    const [visibleCount, setVisibleCount] = useState(0);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const initialElements = Array.from(
+            { length: 3 },
+            (_, i) => document.getElementById(`item-${i + 1}`) as HTMLElement,
+        ).filter(Boolean);
+
+        monitorRef.current = new VerticalViewportMonitor(initialElements, {
+            root: containerRef.current,
+            onEnter: (element) => {
+                element.classList.add("visible");
+                setVisibleCount((prev) => prev + 1);
+            },
+            onLeave: (element) => {
+                element.classList.remove("visible");
+                setVisibleCount((prev) => Math.max(0, prev - 1));
+            },
+        });
+
+        return () => {
+            monitorRef.current?.destroy();
+        };
+    }, []);
+
+    const addElement = () => {
+        const newId = elements.length + 1;
+        setElements([...elements, newId]);
+
+        setTimeout(() => {
+            const newElement = document.getElementById(`item-${newId}`);
+            if (newElement && monitorRef.current) {
+                monitorRef.current.addElement(newElement);
+            }
+        }, 0);
+    };
+
+    const removeElement = () => {
+        if (elements.length === 0) return;
+        const lastId = elements[elements.length - 1];
+        const elementToRemove = document.getElementById(`item-${lastId}`);
+
+        if (elementToRemove && monitorRef.current) {
+            monitorRef.current.removeElement(elementToRemove);
+        }
+
+        setElements(elements.slice(0, -1));
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: "10px" }}>
+                <button
+                    onClick={addElement}
+                    style={{
+                        padding: "8px 16px",
+                        marginRight: "10px",
+                        borderRadius: "4px",
+                    }}
+                >
+                    添加元素
+                </button>
+                <button
+                    onClick={removeElement}
+                    style={{ padding: "8px 16px", borderRadius: "4px" }}
+                >
+                    移除元素
+                </button>
+                <span style={{ marginLeft: "20px" }}>
+                    当前可见元素: {visibleCount}
+                </span>
+            </div>
+
+            <div
+                ref={containerRef}
+                style={{
+                    height: "250px",
+                    overflow: "auto",
+                    border: "1px solid #ccc",
+                    padding: "10px",
+                }}
+            >
+                {elements.map((id) => (
+                    <div
+                        key={id}
+                        id={`item-${id}`}
+                        style={{
+                            height: "80px",
+                            marginBottom: "10px",
+                            padding: "15px",
+                            backgroundColor: "#e0e0e0",
+                            textAlign: "center",
+                            transition: "all 0.3s ease",
+                            borderRadius: "4px",
+                        }}
+                        className=""
+                    >
+                        元素 {id}
+                    </div>
+                ))}
+            </div>
+
+            <style>{`
+                .visible {
+                    background-color: #2196F3 !important;
+                    color: white;
+                    transform: scale(1.02);
+                }
+            `}</style>
+        </div>
+    );
+};
+
+export default DynamicMonitorDemo;
+```
+
+## API
+
+### VerticalViewportMonitor 类
+
+#### 构造函数
+
+```typescript
+const monitor = new VerticalViewportMonitor(elements, options);
+```
+
+| 参数       | 类型                             | 描述                   |
+| ---------- | -------------------------------- | ---------------------- |
+| `elements` | `HTMLElement \| HTMLElement[]`   | 要监控的元素或元素数组 |
+| `options`  | `VerticalViewportMonitorOptions` | 配置选项（可选）       |
+
+#### 配置选项
+
+| 选项            | 类型                                                         | 默认值          | 描述                 |
+| --------------- | ------------------------------------------------------------ | --------------- | -------------------- |
+| `root`          | `HTMLElement`                                                | `document.body` | 滚动容器根元素       |
+| `onEnter`       | `(element: HTMLElement) => void`                             | `() => {}`      | 元素进入视口时的回调 |
+| `onLeave`       | `(element: HTMLElement, direction?: 'up' \| 'down') => void` | `() => {}`      | 元素离开视口时的回调 |
+| `throttleDelay` | `number`                                                     | `100`           | 节流延迟时间（毫秒） |
+
+#### 方法
+
+| 方法                     | 类型       | 描述                   |
+| ------------------------ | ---------- | ---------------------- |
+| `addElement(element)`    | `function` | 添加新元素到监控列表   |
+| `removeElement(element)` | `function` | 从监控列表移除元素     |
+| `getVisibleElements()`   | `function` | 获取当前所有可见元素   |
+| `destroy()`              | `function` | 停止监控，清理事件监听 |
+
+## 类型定义
+
+```typescript
+type ViewportCallback = (
+    element: HTMLElement,
+    direction?: "up" | "down",
+) => void;
+
+interface VerticalViewportMonitorOptions {
+    root?: HTMLElement;
+    onEnter?: ViewportCallback;
+    onLeave?: ViewportCallback;
+    throttleDelay?: number;
+}
+
+class VerticalViewportMonitor {
+    constructor(
+        elements: HTMLElement | HTMLElement[],
+        options?: VerticalViewportMonitorOptions,
+    );
+
+    addElement(element: HTMLElement): void;
+    removeElement(element: HTMLElement): void;
+    getVisibleElements(): HTMLElement[];
+    destroy(): void;
+}
+```
+
+## 注意事项
+
+1. **性能优化**：默认使用 100ms 的节流延迟，可以根据需求调整 `throttleDelay` 参数。
+
+2. **方向判断**：`onLeave` 回调会返回离开方向（`up` 或 `down`），可用于判断元素是向上还是向下滚动离开视口。
+
+3. **生命周期管理**：在组件卸载时应调用 `destroy()` 方法清理事件监听，避免内存泄漏。
+
+4. **动态元素**：支持通过 `addElement` 和 `removeElement` 方法动态管理监控的元素。
+
+5. **适用场景**：
+    - 滚动动画触发
+    - 图片懒加载
+    - 无限滚动
+    - 广告曝光统计
+    - 页面埋点追踪
+
+6. **垂直方向检测**：该监控器仅判断垂直方向的可见性，不考虑水平方向。

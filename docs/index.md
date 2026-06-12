@@ -10,7 +10,7 @@ ui-components 是 公共组件和工具库，为 UI 相关组件提供共享的�
 src/
 ├── components/  # 组件库
 ├── modules/     # 功能模块
-├── utils/       # 工具函数
+├── hooks/       # React 自定义钩子
 └── index.ts     # 入口文件
 ```
 

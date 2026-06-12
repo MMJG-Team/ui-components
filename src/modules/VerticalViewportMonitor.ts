@@ -65,9 +65,10 @@ export default class VerticalViewportMonitor {
         this.elements.forEach(element => {
             const rect = element.getBoundingClientRect();
 
+            const top = rect.top - rootRect.top;
             // 仅判断垂直方向：元素是否有垂直方向的部分在视口内
             // 元素顶部 <= 视口底部 且 元素底部 >= 视口顶部
-            const isVisibleNow = rect.top <= viewportHeight && rect.bottom >= rootRect.top;
+            const isVisibleNow = top <= viewportHeight && rect.bottom >= rootRect.top;
             const isVisible = this.visibleStatus.get(element) || false;
 
             // 状态变化时触发回调
@@ -75,7 +76,7 @@ export default class VerticalViewportMonitor {
                 this.options.onEnter(element);
                 this.visibleStatus.set(element, true);
             } else if (!isVisibleNow && isVisible) {
-                const direction = rect.top > viewportHeight ? 'up' : 'down';
+                const direction = top > viewportHeight ? 'up' : 'down';
                 this.options.onLeave(element, direction);
 
                 this.visibleStatus.set(element, false);

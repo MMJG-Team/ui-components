@@ -1,0 +1,236 @@
+# UniqueRequest 唯一请求管理器
+
+## 概述
+
+`UniqueRequest` 是一个用于解决前端竞态问题的请求管理器。当连续发起多个同类请求时，它会自动取消之前未完成的请求，只保留最新请求的响应结果，有效避免旧数据覆盖新数据的问题。
+
+## 导入
+
+```tsx
+import { UniqueRequest } from "ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useState } from "react";
+import { UniqueRequest, isAbortError } from "ui-components";
+import axios from "axios";
+
+const searchApi = async (keyword: string, config?: any) => {
+    const response = await axios.get(`https://api.example.com/search`, {
+        params: { keyword },
+        ...config,
+    });
+    return response.data;
+};
+
+const SearchDemo: React.FC = () => {
+    const [keyword, setKeyword] = useState("");
+    const [results, setResults] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+    const requestManager = React.useRef(new UniqueRequest());
+
+    const handleSearch = async () => {
+        if (!keyword.trim()) return;
+
+        setLoading(true);
+        try {
+            const data = await requestManager.current.request(
+                searchApi,
+                keyword,
+            );
+            setResults(data);
+        } catch (error) {
+            if (!isAbortError(error)) {
+                console.error("搜索失败:", error);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div>
+            <input
+                type="text"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="输入搜索关键词"
+                style={{ padding: "8px", width: "300px", marginRight: "10px" }}
+            />
+            <button
+                onClick={handleSearch}
+                disabled={loading}
+                style={{ padding: "8px 16px", borderRadius: "4px" }}
+            >
+                {loading ? "搜索中..." : "搜索"}
+            </button>
+
+            <div style={{ marginTop: "20px" }}>
+                {results.length > 0 ? (
+                    <ul>
+                        {results.map((item, index) => (
+                            <li key={index}>{item.title}</li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>暂无搜索结果</p>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default SearchDemo;
+```
+
+### 结合 React Hooks 使用
+
+```tsx preview
+import React, { useState, useRef, useCallback } from "react";
+import { UniqueRequest, isAbortError } from "ui-components";
+
+const mockApi = async (delay: number, config?: any) => {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+    return { data: `请求完成，延迟 ${delay}ms` };
+};
+
+const RequestDemo: React.FC = () => {
+    const [result, setResult] = useState("");
+    const [count, setCount] = useState(0);
+    const requestManager = useRef(new UniqueRequest());
+
+    const sendRequest = useCallback(async () => {
+        const delay = Math.floor(Math.random() * 3000) + 500;
+        const requestCount = ++count;
+        setCount(requestCount);
+
+        try {
+            const data = await requestManager.current.request(mockApi, delay);
+            setResult(`请求 ${requestCount}: ${data.data}`);
+        } catch (error) {
+            if (isAbortError(error)) {
+                setResult(`请求 ${requestCount}: 已被取消`);
+            } else {
+                setResult(`请求 ${requestCount}: 失败`);
+            }
+        }
+    }, [count]);
+
+    const cancelRequest = useCallback(() => {
+        requestManager.current.cancel();
+        setResult("当前请求已取消");
+    }, []);
+
+    return (
+        <div>
+            <button
+                onClick={sendRequest}
+                style={{
+                    padding: "10px 20px",
+                    marginRight: "10px",
+                    borderRadius: "4px",
+                }}
+            >
+                发送请求
+            </button>
+            <button
+                onClick={cancelRequest}
+                style={{ padding: "10px 20px", borderRadius: "4px" }}
+            >
+                取消请求
+            </button>
+            <div
+                style={{
+                    marginTop: "20px",
+                    padding: "10px",
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: "4px",
+                }}
+            >
+                <p>当前请求计数: {count}</p>
+                <p>状态: {result}</p>
+            </div>
+        </div>
+    );
+};
+
+export default RequestDemo;
+```
+
+## API
+
+### UniqueRequest 类
+
+#### 构造函数
+
+```typescript
+const requestManager = new UniqueRequest();
+```
+
+#### 方法
+
+| 方法                            | 类型             | 描述                         |
+| ------------------------------- | ---------------- | ---------------------------- |
+| `request(api, params, config?)` | `async function` | 执行请求，自动取消之前的请求 |
+| `cancel()`                      | `function`       | 手动取消当前请求             |
+
+#### 属性
+
+| 属性        | 类型      | 描述             |
+| ----------- | --------- | ---------------- |
+| `isLoading` | `boolean` | 获取当前加载状态 |
+
+### request 方法参数
+
+| 参数     | 类型                                    | 描述                       |
+| -------- | --------------------------------------- | -------------------------- |
+| `api`    | `(params: P, config?: C) => Promise<R>` | API 函数，支持 AbortSignal |
+| `params` | `P`                                     | 请求参数                   |
+| `config` | `C extends AxiosRequestConfig`          | 请求配置（可选）           |
+
+### isAbortError 函数
+
+用于判断错误是否为取消错误：
+
+```typescript
+const isAbortError = (error: any) => error.message === ABORT_ERROR_MESSAGE;
+```
+
+## 类型定义
+
+```typescript
+export class UniqueRequest {
+    request<P, C extends AxiosRequestConfig, R>(
+        api: (params: P, config?: C) => Promise<R>,
+        params: P,
+        config?: C,
+    ): Promise<R>;
+
+    cancel(): void;
+
+    get isLoading(): boolean;
+}
+
+export const isAbortError: (error: any) => boolean;
+export const ABORT_ERROR_MESSAGE: string;
+```
+
+## 注意事项
+
+1. **竞态问题解决**：当连续发起多个请求时，只有最新的请求会生效，之前的请求会被自动取消。
+
+2. **错误处理**：被取消的请求会抛出 `ABORT_ERROR_MESSAGE` 错误，建议使用 `isAbortError` 函数进行判断，避免将取消操作视为真正的错误。
+
+3. **Loading 状态**：`isLoading` 属性仅在最新请求进行时返回 `true`，被取消的请求不会影响加载状态。
+
+4. **适用场景**：
+    - 搜索框实时搜索
+    - 分页数据加载
+    - Tab 切换数据获取
+    - 任何需要防止旧数据覆盖新数据的场景
+
+5. **依赖要求**：需要确保 API 函数支持 `signal` 参数传递给底层请求库（如 axios）。
