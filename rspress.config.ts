@@ -5,7 +5,7 @@ export default defineConfig({
     // 文档根目录
     root: 'docs',
     // 文档标题
-    title: 'ui-components',
+    title: 'UI Components',
     plugins: [
         pluginPreview({
             defaultRenderMode: 'pure'
@@ -15,11 +15,11 @@ export default defineConfig({
         sidebar: {
             '/': [
                 {
-                    text: '首页',
+                    text: 'Home',
                     link: '/',
                 },
                 {
-                    text: '组件',
+                    text: 'Components',
                     items: [
                         {
                             text: 'Masonry 瀑布流',
@@ -31,16 +31,16 @@ export default defineConfig({
                     text: 'Hooks',
                     items: [
                         {
-                            text: 'useMockProgress 模拟进度条',
+                            text: 'useMockProgress 模拟进度',
                             link: '/hooks/useMockProgress/',
                         },
                     ],
                 },
                 {
-                    text: '模块',
+                    text: 'Modules',
                     items: [
                         {
-                            text: 'UniqueRequest 唯一请求管理',
+                            text: 'UniqueRequest 唯一请求',
                             link: '/modules/UniqueRequest/',
                         },
                         {

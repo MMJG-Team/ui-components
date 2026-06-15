@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export type IUseMockProgressOptions = {
     step?: number | (() => number)
