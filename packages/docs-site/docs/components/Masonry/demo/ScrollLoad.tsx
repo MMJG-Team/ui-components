@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Masonry } from "ui-components";
-import { type ImageRecord, ImageModel } from "ui-components";
+import { Masonry } from "@mmjg/ui-components";
+import { type ImageRecord, ImageModel } from "@mmjg/ui-components";
 import { fetchImages } from "./utils";
 
 const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {
@@ -24,7 +24,7 @@ const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {
     );
 };
 
-export default function DynamicLoad() {
+export default function ScrollLoad() {
     const [items, setItems] = useState<
         ImageRecord<{ id: string; name: string }>[]
     >([]);
@@ -34,7 +34,7 @@ export default function DynamicLoad() {
     );
 
     const fetctMoreImages = async () => {
-        const images = await fetchImages(10);
+        const images = await fetchImages(50);
 
         await imageModelRef.current.loadRecords(images);
 
@@ -52,35 +52,20 @@ export default function DynamicLoad() {
     }, []);
 
     return (
-        <div>
-            <button
-                style={{
-                    padding: "4px 16px",
-                    fontSize: "14px",
-                    color: "#fff",
-                    backgroundColor: "var(--rp-c-link)",
-                    border: "none",
-                    borderRadius: "4px",
-                    marginBottom: "16px",
-                    cursor: "pointer",
-                }}
-                onClick={() => onLoadMore()}
-            >
-                加载更多
-            </button>
-            <div
-                style={{
-                    height: "500px",
-                    resize: "horizontal",
-                }}
-            >
-                <Masonry
-                    items={items}
-                    columnCount={10}
-                    gap={8}
-                    itemRender={({ item }) => <Card data={item} />}
-                />
-            </div>
+        <div
+            style={{
+                height: "500px",
+                resize: "horizontal",
+            }}
+        >
+            <Masonry
+                items={items}
+                columnCount={10}
+                gap={8}
+                itemRender={({ item }) => <Card data={item} />}
+                loadMoreThreshold={100}
+                onLoadMore={onLoadMore}
+            />
         </div>
     );
 }

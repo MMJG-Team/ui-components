@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Masonry } from "ui-components";
-import { type ImageRecord, ImageModel } from "ui-components";
+import { Masonry } from "@mmjg/ui-components";
+import { type ImageRecord, ImageModel } from "@mmjg/ui-components";
 import { fetchImages } from "./utils";
 
 const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {
@@ -24,7 +24,7 @@ const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {
     );
 };
 
-export default function ScrollLoad() {
+export default function Responsive() {
     const [items, setItems] = useState<
         ImageRecord<{ id: string; name: string }>[]
     >([]);
@@ -33,22 +33,16 @@ export default function ScrollLoad() {
         new ImageModel(),
     );
 
-    const fetctMoreImages = async () => {
-        const images = await fetchImages(50);
+    const initImages = async () => {
+        const images = await fetchImages();
 
         await imageModelRef.current.loadRecords(images);
 
-        const newItems = imageModelRef.current.getRecords();
-
-        setItems([...newItems]);
-    };
-
-    const onLoadMore = async () => {
-        await fetctMoreImages();
+        setItems(imageModelRef.current.getRecords());
     };
 
     useEffect(() => {
-        fetctMoreImages();
+        initImages();
     }, []);
 
     return (
@@ -60,11 +54,16 @@ export default function ScrollLoad() {
         >
             <Masonry
                 items={items}
-                columnCount={10}
+                breakPointConfig={{
+                    1560: 6,
+                    1280: 5,
+                    960: 4,
+                    720: 3,
+                    480: 2,
+                    0: 1,
+                }}
                 gap={8}
                 itemRender={({ item }) => <Card data={item} />}
-                loadMoreThreshold={100}
-                onLoadMore={onLoadMore}
             />
         </div>
     );

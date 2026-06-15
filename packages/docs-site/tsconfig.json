@@ -22,6 +22,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true
     },
+    "include": ["docs", "rspress.config.ts", "global.d.ts"],
     "mdx": {
         "checkMdx": true
     }

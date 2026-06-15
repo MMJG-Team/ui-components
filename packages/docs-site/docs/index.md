@@ -1,6 +1,6 @@
-# ui-components 📦
+# @mmjg/ui-components 📦
 
-ui-components 是面向 UI 开发场景打造的公共组件与工具通用库，核心服务于前端 UI 开发工作，聚焦整合各类可复用的前端能力，为整体 UI 体系提供标准化、通用化的技术支撑。
+@mmjg/ui-components 是面向 UI 开发场景打造的公共组件与工具通用库，核心服务于前端 UI 开发工作，聚焦整合各类可复用的前端能力，为整体 UI 体系提供标准化、通用化的技术支撑。
 
 ## 模块结构 🏗️
 
@@ -19,7 +19,7 @@ src/
 ### 使用 pnpm
 
 ```bash
-pnpm add ui-components
+pnpm add @mmjg/ui-components
 ```
 
 ## 维护方式 🔧
@@ -28,7 +28,7 @@ pnpm add ui-components
 
 ```bash
 # 进入包目录
-cd packages/ui-components
+cd packages/@mmjg/ui-components
 
 # 启动开发服务器
 pnpm run dev

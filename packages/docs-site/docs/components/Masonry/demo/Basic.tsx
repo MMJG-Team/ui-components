@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Masonry } from "ui-components";
-import { type ImageRecord, ImageModel } from "ui-components";
+import { Masonry } from "@mmjg/ui-components";
+import { type ImageRecord, ImageModel } from "@mmjg/ui-components";
 import { fetchImages } from "./utils";
 
 const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {

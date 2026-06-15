@@ -22,6 +22,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true
     },
+    "include": ["src", "rolldown.config.ts", "global.d.ts"],
     "mdx": {
         "checkMdx": true
     }
