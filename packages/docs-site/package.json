@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "dev": "rspress dev --port 9010",
-        "build:docs": "rspress build"
+        "build": "rspress build"
     },
     "keywords": [],
     "author": "",

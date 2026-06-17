@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "dev": "rspress dev --port 9010",
-        "build:docs": "rspress build",
-        "build": "rolldown -c ./rolldown.config.ts",
-        "publish": "node scripts/publish.js"
+        "dev": "pnpm --filter ./packages/docs-site run dev",
+        "build:docs": "pnpm --filter ./packages/docs-site run build",
+        "build": "pnpm --filter ./packages/ui-components run build",
+        "publish": "pnpm --filter ./packages/ui-components run publish "
     },
     "keywords": [],
     "author": "",

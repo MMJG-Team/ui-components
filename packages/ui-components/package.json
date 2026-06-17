@@ -37,6 +37,8 @@
         "@types/node": "^25.9.3",
         "@types/react": "19.1.6",
         "@types/react-dom": "19.1.5",
-        "rolldown": "^1.1.1"
+        "less": "^4.6.6",
+        "rolldown": "^1.1.1",
+        "rollup-plugin-postcss": "^4.0.2"
     }
 }

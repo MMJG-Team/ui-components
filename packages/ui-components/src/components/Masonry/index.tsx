@@ -1,14 +1,13 @@
 import { debounce, divide } from "lodash-es";
 import { useImperativeHandle, useMemo, useRef } from "react";
 import classNames from "classnames";
-import styles from "./style.module.scss";
 import type { MasonryProps, MasonryRef } from "./types";
 import useColumnCount from "./hooks/useColumnCount";
 import useMasonryLayout from "./hooks/useMasonryLayout";
 import useResizeObserver from "./hooks/useResizeObserver";
 import useScrollViewArea from "./hooks/useScrollViewArea";
-
 import React from "react";
+import styles from "./style.module.less";
 
 export * from "./models/ImageModel";
 export type * from "./types";
