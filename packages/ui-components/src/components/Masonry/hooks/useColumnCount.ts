@@ -37,21 +37,30 @@ const useColumnCount = (options: useColumnCountOptions) => {
         // 优先使用传入的 columnCount
         if (columnCount != null && typeof columnCount === 'number') {
             count = columnCount;
-        } else if (!containerElement) {
+            setCurrentColumnCount(applyMaxColumnCount(count));
             return;
-        } else if (!breakPointConfig) {
-            count = DEFAULT_COLUMN_COUNT;
-        } else {
-            const breakPoints = Object.keys(breakPointConfig).map(Number).sort((a, b) => a - b);
-            const width = containerElement.clientWidth;
-            let index = 0;
-            for (let i = 0; i < breakPoints.length; i++) {
-                if (width >= breakPoints[i]) {
-                    index = i;
-                }
-            }
-            count = breakPointConfig[breakPoints[index]];
         }
+        
+        if (!breakPointConfig) {
+            count = DEFAULT_COLUMN_COUNT;
+            setCurrentColumnCount(applyMaxColumnCount(count));
+            return
+        }
+
+        if (!containerElement) {
+            return;
+        }
+
+        const breakPoints = Object.keys(breakPointConfig).map(Number).sort((a, b) => a - b);
+        const width = containerElement.clientWidth;
+        let index = 0;
+        for (let i = 0; i < breakPoints.length; i++) {
+            if (width >= breakPoints[i]) {
+                index = i;
+            }
+        }
+        count = breakPointConfig[breakPoints[index]];
+        
         setCurrentColumnCount(applyMaxColumnCount(count));
     }
 
