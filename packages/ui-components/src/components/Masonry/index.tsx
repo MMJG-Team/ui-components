@@ -1,12 +1,11 @@
 import { debounce, divide } from "lodash-es";
-import { useImperativeHandle, useMemo, useRef } from "react";
+import { forwardRef, useImperativeHandle, useMemo, useRef } from "react";
 import classNames from "classnames";
 import type { MasonryProps, MasonryRef } from "./types";
 import useColumnCount from "./hooks/useColumnCount";
 import useMasonryLayout from "./hooks/useMasonryLayout";
 import useResizeObserver from "./hooks/useResizeObserver";
 import useScrollViewArea from "./hooks/useScrollViewArea";
-import React from "react";
 import styles from "./style.module.less";
 
 export * from "./models/ImageModel";
@@ -19,7 +18,7 @@ const ITEM_CLASS_NAME_PREFIX = "masonry-item";
  * @param props
  * @returns
  */
-export const Masonry = React.forwardRef(function InternalMasonry<
+export const Masonry = forwardRef(function InternalMasonry<
     Item extends {
         id: string | number;
         src: string;

@@ -1,5 +1,6 @@
-import { defineConfig } from 'rspress/config';
+import { defineConfig } from '@rspress/core';
 import { pluginPreview } from '@rspress/plugin-preview';
+import { pluginLess } from '@rsbuild/plugin-less';
 
 export default defineConfig({
     base: 'ui-components/docs',
@@ -52,5 +53,14 @@ export default defineConfig({
                 }
             ],
         }
-    }
+    },
+    builderConfig: {
+        resolve: {
+            alias: {
+                '@components': './docs/components'
+            }
+        },
+        plugins: [pluginLess()],
+    },
+    ssg: false
 });

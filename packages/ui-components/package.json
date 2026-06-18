@@ -2,6 +2,7 @@
     "name": "@mmjg/ui-components",
     "version": "1.0.0",
     "description": "A component library for web UI",
+    "type": "module",
     "main": "./dist/index.js",
     "exports": {
         ".": {

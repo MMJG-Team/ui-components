@@ -3,13 +3,30 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "dev": "pnpm --filter ./packages/docs-site run dev",
-        "build:docs": "pnpm --filter ./packages/docs-site run build",
+        "dev": "rspress dev --port 9010",
+        "build:docs": "rspress build",
         "build": "pnpm --filter ./packages/ui-components run build",
         "publish": "pnpm --filter ./packages/ui-components run publish "
     },
     "keywords": [],
     "author": "MMJG-Team",
     "license": "ISC",
-    "packageManager": "pnpm@10.12.1"
+    "packageManager": "pnpm@10.12.1",
+    "dependencies": {
+        "@mmjg/ui-components": "workspace:*",
+        "axios": "1.9.0",
+        "classnames": "2.5.1",
+        "lodash-es": "4.17.21",
+        "react": "18.3.0",
+        "react-dom": "18.3.0"
+    },
+    "devDependencies": {
+        "@rsbuild/plugin-less": "^1.6.4",
+        "@rspress/core": "^2.0.13",
+        "@rspress/plugin-preview": "^2.0.14",
+        "@types/lodash-es": "4.17.12",
+        "@types/node": "^25.9.3",
+        "@types/react": "19.1.6",
+        "@types/react-dom": "19.1.5"
+    }
 }
