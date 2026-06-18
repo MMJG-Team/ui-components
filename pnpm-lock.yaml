@@ -53,9 +53,6 @@ importers:
 
   packages/ui-components:
     dependencies:
-      axios:
-        specifier: 1.9.0
-        version: 1.9.0
       classnames:
         specifier: 2.5.1
         version: 2.5.1
@@ -75,6 +72,9 @@ importers:
       '@types/react-dom':
         specifier: 19.1.5
         version: 19.1.5(@types/react@19.1.6)
+      axios:
+        specifier: 1.9.0
+        version: 1.9.0
       less:
         specifier: ^4.6.6
         version: 4.6.6
