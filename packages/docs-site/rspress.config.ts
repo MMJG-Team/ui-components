@@ -2,6 +2,7 @@ import { defineConfig } from 'rspress/config';
 import { pluginPreview } from '@rspress/plugin-preview';
 
 export default defineConfig({
+    base: 'ui-components/docs',
     // 文档根目录
     root: 'docs',
     // 文档标题
