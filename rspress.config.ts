@@ -3,7 +3,7 @@ import { pluginPreview } from '@rspress/plugin-preview';
 import { pluginLess } from '@rsbuild/plugin-less';
 
 export default defineConfig({
-    base: 'ui-components/docs',
+    base: 'ui-components',
     // 文档根目录
     root: 'docs',
     // 文档标题
