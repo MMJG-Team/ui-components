@@ -20,7 +20,11 @@
         /* type checking */
         "strict": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+
+        "outDir": "./types",
+        "declaration": true,
+        "emitDeclarationOnly": true
     },
     "include": ["src", "rolldown.config.ts", "global.d.ts"],
     "mdx": {

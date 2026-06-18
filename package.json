@@ -1,5 +1,5 @@
 {
-    "name": "@mmjg/ui-components",
+    "name": "@mmjg/ui-components-monorepo",
     "version": "1.0.0",
     "description": "",
     "scripts": {
@@ -9,7 +9,7 @@
         "publish": "pnpm --filter ./packages/ui-components run publish "
     },
     "keywords": [],
-    "author": "",
+    "author": "MMJG-Team",
     "license": "ISC",
     "packageManager": "pnpm@10.12.1"
 }

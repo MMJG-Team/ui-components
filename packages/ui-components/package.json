@@ -1,13 +1,13 @@
 {
     "name": "@mmjg/ui-components",
     "version": "1.0.0",
-    "description": "",
+    "description": "A component library for web UI",
     "main": "./dist/index.js",
     "exports": {
         ".": {
             "types": {
                 "development": "./src/index.ts",
-                "production": "./dist/types/index.d.ts",
+                "production": "./dist/index.d.ts",
                 "default": "./src/index.ts"
             },
             "import": {
@@ -21,24 +21,48 @@
         "build": "rolldown -c ./rolldown.config.ts",
         "publish": "node scripts/publish.js"
     },
-    "keywords": [],
-    "author": "",
+    "files": [
+        "dist"
+    ],
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/MMJG-Team/ui-components.git"
+    },
+    "keywords": [
+        "frontend",
+        "react",
+        "ui",
+        "component",
+        "hooks",
+        "masonry"
+    ],
+    "author": "MMJG-Team",
     "license": "ISC",
     "packageManager": "pnpm@10.12.1",
     "dependencies": {
-        "axios": "1.9.0",
         "classnames": "2.5.1",
-        "lodash-es": "4.17.21",
-        "react": "18.3.0",
-        "react-dom": "18.3.0"
+        "lodash-es": "4.17.21"
     },
     "devDependencies": {
         "@types/lodash-es": "4.17.12",
         "@types/node": "^25.9.3",
         "@types/react": "19.1.6",
         "@types/react-dom": "19.1.5",
+        "axios": "1.9.0",
         "less": "^4.6.6",
+        "react": "18.3.0",
+        "react-dom": "18.3.0",
         "rolldown": "^1.1.1",
-        "rollup-plugin-postcss": "^4.0.2"
+        "rolldown-plugin-dts": "^0.26.0",
+        "rollup-plugin-postcss": "^4.0.2",
+        "typescript": "^6.0.3"
+    },
+    "peerDependencies": {
+        "axios": ">=1.9.0",
+        "react": ">=18.0.0",
+        "react-dom": ">=18.0.0"
     }
 }
