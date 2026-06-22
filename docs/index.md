@@ -1,43 +1,36 @@
-# @mmjg/ui-components 📦
+---
+pageType: home
+title: "@mmjg/ui-components"
+titleSuffix: "基于 Rsbuild 的静态站点生成器"
 
-@mmjg/ui-components 是面向 UI 开发场景打造的公共组件与工具通用库，核心服务于前端 UI 开发工作，聚焦整合各类可复用的前端能力，为整体 UI 体系提供标准化、通用化的技术支撑。
+hero:
+    name: "@mmjg/ui-components"
+    text: |
+        做一个小而美的
+        组件库
+    tagline: 易用、灵活、可扩展
+    image:
+        src: /cat-logo-02.png
+        alt: logo
+    actions:
+        - theme: brand
+          text: 开始使用
+          link: ./intro
+        # - theme: alt
+        #   text: 快速开始
+        #   link: ./intro
 
-## 模块结构 🏗️
-
-该模块采用清晰的分层结构，主要包含以下三个核心部分：
-
-```
-src/
-├── components/  # 组件库
-├── modules/     # 功能模块
-├── hooks/       # React 自定义钩子
-└── index.ts     # 入口文件
-```
-
-## 安装方式 📥
-
-### 使用 pnpm
-
-```bash
-pnpm add @mmjg/ui-components
-```
-
-## 维护方式 🔧
-
-### **启动文档服务** 🚀
-
-```bash
-# 进入包目录
-cd packages/@mmjg/ui-components
-
-# 启动开发服务器
-pnpm run dev
-```
-
-### **构建文档** 📚
-
-```bash
-pnpm run build:docs
-```
-
-构建后的文档将输出到 `doc_build` 目录，可部署到静态网站服务器。
+features:
+    - title: 高性能的组件
+      details: 内置虚拟滚动、懒加载等性能优化方案，大量复用实例降低重绘开销，复杂页面也能保持流畅交互。
+      icon: /components.svg
+      link: ./components/Masonry
+    - title: 灵活易用的hooks
+      details: 封装通用逻辑，与组件解耦，大幅减少重复样板代码。
+      icon: /hooks.svg
+      link: ./hooks/useMockProgress
+    - title: 功能强大的模块
+      details: 开箱即用的请求、监听器等模块，统一类型定义，天然适配TS
+      icon: /modules.svg
+      link: ./modules/UniqueRequest
+---

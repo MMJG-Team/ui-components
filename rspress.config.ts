@@ -7,18 +7,36 @@ export default defineConfig({
     // 文档根目录
     root: 'docs',
     // 文档标题
-    title: 'UI Components',
+    title: '@mmjg/ui-components',
+    icon: '/cat-logo-02.png',
     plugins: [
         pluginPreview({
             defaultRenderMode: 'pure'
         })
     ],
     themeConfig: {
+        socialLinks: [
+            {
+                icon: 'github',
+                mode: 'link',
+                content: 'https://github.com/MMJG-Team/ui-components',
+            },
+        ],
+        nav: [
+            {
+                text: '简介',
+                link: '/intro',
+            }
+        ],
         sidebar: {
             '/': [
                 {
                     text: 'Home',
                     link: '/',
+                },
+                {
+                    text: '简介',
+                    link: '/intro',
                 },
                 {
                     text: 'Components',
