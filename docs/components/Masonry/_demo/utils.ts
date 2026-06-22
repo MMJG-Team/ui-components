@@ -66,5 +66,3 @@ export const fetchImages = async (count: number = 5000) => {
 
     return items;
 };
-
-export default IMAGES

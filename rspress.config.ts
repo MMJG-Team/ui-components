@@ -57,10 +57,10 @@ export default defineConfig({
     builderConfig: {
         resolve: {
             alias: {
-                '@components': './docs/components'
+                '@components': './docs/components',
+                '@mmjg/ui-components': './packages/ui-components/src/index.ts'
             }
         },
         plugins: [pluginLess()],
     },
-    ssg: false
 });

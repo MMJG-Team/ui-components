@@ -2,6 +2,7 @@
     "name": "@mmjg/ui-components-monorepo",
     "version": "1.0.0",
     "description": "",
+    "type": "module",
     "scripts": {
         "dev": "rspress dev --port 9010",
         "build:docs": "rspress build",

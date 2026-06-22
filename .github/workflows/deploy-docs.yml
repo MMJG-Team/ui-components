@@ -39,9 +39,6 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Build ui-components
-              run: pnpm run build
-
             - name: Build docs
               run: pnpm run build:docs
 
