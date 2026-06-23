@@ -1,0 +1,27 @@
+[
+    {
+        "type": "file",
+        "name": "index",
+        "label": "首页"
+    },
+    {
+        "type": "file",
+        "name": "/intro",
+        "label": "简介"
+    },
+    {
+        "type": "dir",
+        "name": "components",
+        "label": "组件"
+    },
+    {
+        "type": "dir",
+        "name": "hooks",
+        "label": "hooks"
+    },
+    {
+        "type": "dir",
+        "name": "modules",
+        "label": "模块"
+    }
+]

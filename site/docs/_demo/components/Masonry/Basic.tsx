@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Masonry } from "@mmjg/ui-components";
 import { type ImageRecord, ImageModel } from "@mmjg/ui-components";
-import { fetchImages } from "@components/Masonry/_demo/utils";
+import { fetchImages } from "@demo/components/Masonry/utils";
 
 const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {
     return (
@@ -19,12 +19,16 @@ const Card = (props: { data: ImageRecord<{ id: string | number }> }) => {
                 src={props.data.src}
                 width={"100%"}
                 height={"100%"}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                }}
             />
         </div>
     );
 };
 
-export default function ScrollLoad() {
+export default function Basic() {
     const [items, setItems] = useState<
         ImageRecord<{ id: string; name: string }>[]
     >([]);
@@ -33,38 +37,29 @@ export default function ScrollLoad() {
         new ImageModel(),
     );
 
-    const fetctMoreImages = async () => {
-        const images = await fetchImages(50);
+    const initImages = async () => {
+        const images = await fetchImages();
 
         await imageModelRef.current.loadRecords(images);
 
-        const newItems = imageModelRef.current.getRecords();
-
-        setItems([...newItems]);
-    };
-
-    const onLoadMore = async () => {
-        await fetctMoreImages();
+        setItems(imageModelRef.current.getRecords());
     };
 
     useEffect(() => {
-        fetctMoreImages();
+        initImages();
     }, []);
 
     return (
         <div
             style={{
                 height: "500px",
-                resize: "horizontal",
             }}
         >
             <Masonry
                 items={items}
-                columnCount={10}
+                columnCount={5}
                 gap={8}
                 itemRender={({ item }) => <Card data={item} />}
-                loadMoreThreshold={100}
-                onLoadMore={onLoadMore}
             />
         </div>
     );

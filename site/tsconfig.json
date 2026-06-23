@@ -20,9 +20,13 @@
         /* type checking */
         "strict": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true
+        "noUnusedParameters": true,
+
+        "paths": {
+            "@demo/*": ["./_demo/*"]
+        }
     },
-    "include": ["docs", "global.d.ts"],
+    "include": ["./rspress.config.ts", "docs/**/*"],
     "mdx": {
         "checkMdx": true
     }

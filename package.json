@@ -4,8 +4,8 @@
     "description": "",
     "type": "module",
     "scripts": {
-        "dev": "rspress dev --port 9010",
-        "build:docs": "rspress build",
+        "dev": "pnpm --filter ./site run dev",
+        "build:docs": "pnpm --filter ./site run build",
         "build": "pnpm --filter ./packages/ui-components run build",
         "publish": "pnpm --filter ./packages/ui-components run publish "
     },
@@ -16,22 +16,5 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/MMJG-Team/ui-components.git"
-    },
-    "dependencies": {
-        "@mmjg/ui-components": "workspace:*",
-        "axios": "1.9.0",
-        "classnames": "2.5.1",
-        "lodash-es": "4.17.21",
-        "react": "18.3.0",
-        "react-dom": "18.3.0"
-    },
-    "devDependencies": {
-        "@rsbuild/plugin-less": "^1.6.4",
-        "@rspress/core": "^2.0.13",
-        "@rspress/plugin-preview": "^2.0.14",
-        "@types/lodash-es": "4.17.12",
-        "@types/node": "^25.9.3",
-        "@types/react": "19.1.6",
-        "@types/react-dom": "19.1.5"
     }
 }
