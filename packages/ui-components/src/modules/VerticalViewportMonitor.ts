@@ -1,10 +1,10 @@
 import { throttle } from 'lodash-es';
 
 // 定义回调函数类型
-type ViewportCallback = (element: HTMLElement, direction?: 'up' | 'down') => void;
+export type ViewportCallback = (element: HTMLElement, direction?: 'up' | 'down') => void;
 
 // 纵向视口监控器配置选项
-interface VerticalViewportMonitorOptions {
+export interface VerticalViewportMonitorOptions {
     root?: HTMLElement;
     onEnter?: ViewportCallback;
     onLeave?: ViewportCallback;
@@ -12,7 +12,7 @@ interface VerticalViewportMonitorOptions {
 }
 
 // 纵向视口监控器：支持多个元素，仅判断垂直方向可见性
-export default class VerticalViewportMonitor {
+export class VerticalViewportMonitor {
     private elements: HTMLElement[];
     private visibleStatus: Map<HTMLElement, boolean>;
     private options: Required<VerticalViewportMonitorOptions>;
@@ -119,3 +119,4 @@ export default class VerticalViewportMonitor {
     }
 }
 
+export default VerticalViewportMonitor

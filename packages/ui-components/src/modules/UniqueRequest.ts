@@ -91,3 +91,5 @@ export class UniqueRequest {
         this.loading = false;
     }
 }
+
+export default UniqueRequest
