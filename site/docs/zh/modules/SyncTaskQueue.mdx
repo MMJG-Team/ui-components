@@ -1,0 +1,203 @@
+# SyncTaskQueue 同步任务队列
+
+## 概述
+
+`SyncTaskQueue` 是一个同步阻塞队列管理器，用于按顺序执行异步任务。它确保任务按照添加顺序依次执行，避免并发执行带来的竞态问题，并提供任务完成的事件通知机制。
+
+## 导入
+
+```tsx
+import { SyncTaskQueue, SyncTaskQueueEventType } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useRef, useState, useEffect } from "react";
+import { SyncTaskQueue, SyncTaskQueueEventType } from "@mmjg/ui-components";
+
+const TaskQueueDemo: React.FC = () => {
+    const queueRef = useRef(new SyncTaskQueue());
+    const [tasks, setTasks] = useState<string[]>([]);
+    const [running, setRunning] = useState(false);
+    const [completed, setCompleted] = useState(false);
+
+    useEffect(() => {
+        const queue = queueRef.current;
+
+        // 监听队列完成事件
+        queue.event.on(SyncTaskQueueEventType.Completed, () => {
+            setCompleted(true);
+            setRunning(false);
+        });
+
+        return () => {
+            queue.event.off(SyncTaskQueueEventType.Completed);
+        };
+    }, []);
+
+    const addTask = () => {
+        const taskId = `任务-${tasks.length + 1}`;
+        setTasks((prev) => [...prev, taskId]);
+
+        queueRef.current.add(async () => {
+            setRunning(true);
+            setCompleted(false);
+            console.log(`开始执行: ${taskId}`);
+
+            // 模拟异步任务
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+
+            console.log(`完成执行: ${taskId}`);
+        });
+    };
+
+    const clearQueue = () => {
+        queueRef.current.clear();
+        setTasks([]);
+        setRunning(false);
+        setCompleted(false);
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: "10px" }}>
+                <button
+                    onClick={addTask}
+                    style={{
+                        padding: "8px 16px",
+                        marginRight: "10px",
+                        borderRadius: "4px",
+                    }}
+                >
+                    添加任务
+                </button>
+                <button
+                    onClick={clearQueue}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                    }}
+                >
+                    清空队列
+                </button>
+            </div>
+
+            <div
+                style={{
+                    padding: "10px",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                }}
+            >
+                <p>
+                    状态: {running ? "执行中" : completed ? "已完成" : "等待中"}
+                </p>
+                <p>队列长度: {tasks.length}</p>
+            </div>
+
+            <div
+                style={{
+                    padding: "10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                }}
+            >
+                <p>任务列表:</p>
+                <ul>
+                    {tasks.map((task, index) => (
+                        <li key={index}>{task}</li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+export default TaskQueueDemo;
+```
+
+## API
+
+### SyncTaskQueue 类
+
+#### 构造函数
+
+```typescript
+const queue = new SyncTaskQueue();
+```
+
+#### 属性
+
+| 属性      | 类型                        | 描述                     |
+| --------- | --------------------------- | ------------------------ |
+| `event`   | `Mitt<SyncTaskQueueEvents>` | 事件发射器，用于监听事件 |
+| `queue`   | `Task[]`                    | 任务队列                 |
+| `running` | `boolean`                   | 是否正在执行任务         |
+
+#### 方法
+
+| 方法      | 类型                                | 描述                 |
+| --------- | ----------------------------------- | -------------------- |
+| `add(fn)` | `(fn: () => Promise<void>) => void` | 添加任务到队列       |
+| `run()`   | `async () => void`                  | 执行队列中的所有任务 |
+| `clear()` | `() => void`                        | 清空队列并停止执行   |
+
+### Task 类型
+
+```typescript
+interface Task {
+    id: string;
+    fn: () => Promise<void>;
+}
+```
+
+### SyncTaskQueueEventType 事件类型
+
+```typescript
+enum SyncTaskQueueEventType {
+    Completed = "completed",
+}
+```
+
+### SyncTaskQueueEvents 事件定义
+
+```typescript
+type SyncTaskQueueEvents = {
+    [SyncTaskQueueEventType.Completed]: void;
+};
+```
+
+## 工作原理
+
+1. **任务添加**：通过 `add` 方法添加异步任务，任务会被推入队列
+2. **自动执行**：添加任务后会自动触发 `run` 方法，开始执行队列中的任务
+3. **阻塞执行**：使用 `while` 循环依次执行队列中的任务，确保任务按顺序完成
+4. **事件通知**：所有任务完成后，触发 `completed` 事件
+
+## 使用场景
+
+1. **文件上传**：确保文件按顺序上传，避免并发上传导致的资源竞争
+2. **API 请求**：按顺序执行 API 请求，确保请求顺序和响应顺序一致
+3. **数据处理**：按顺序处理数据，避免并发处理导致的数据错乱
+4. **动画序列**：按顺序执行动画效果，确保动画按照预期顺序播放
+
+## 注意事项
+
+1. **任务顺序**：任务严格按照添加顺序执行，不会并发执行
+2. **错误处理**：如果某个任务抛出错误，会中断后续任务的执行
+3. **内存管理**：任务完成后会自动从队列中移除
+4. **事件监听**：建议在组件卸载时移除事件监听，避免内存泄漏
+5. **清空队列**：调用 `clear` 方法会立即停止执行并清空队列
+
+## 与 Promise 队列的区别
+
+| 特性     | SyncTaskQueue          | Promise 队列             |
+| -------- | ---------------------- | ------------------------ |
+| 执行方式 | 同步阻塞，按顺序执行   | 可以并发执行             |
+| 任务管理 | 提供队列管理功能       | 需要手动管理             |
+| 事件通知 | 提供完成事件           | 需要手动实现             |
+| 错误处理 | 错误会中断后续任务     | 需要单独处理每个 Promise |
+| 使用场景 | 需要严格顺序执行的场景 | 可以并发执行的场景       |

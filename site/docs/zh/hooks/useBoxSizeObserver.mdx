@@ -1,0 +1,89 @@
+# useBoxSizeObserver 容器尺寸监控
+
+## 概述
+
+`useBoxSizeObserver` 是一个 React 自定义钩子，用于监听 DOM 元素的大小变化。它使用 ResizeObserver API 来实时监测元素尺寸的变化，并返回最新的宽度和高度。
+
+## 导入
+
+```tsx
+import { useBoxSizeObserver } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React from "react";
+import { useBoxSizeObserver } from "@mmjg/ui-components";
+
+const BoxSizeDemo: React.FC = () => {
+    const [ref, boxSize] = useBoxSizeObserver();
+
+    return (
+        <div>
+            <div
+                style={{
+                    marginBottom: "10px",
+                    padding: "10px",
+                    borderRadius: "4px",
+                }}
+            >
+                <p>容器宽度: {boxSize.width.toFixed(2)}px</p>
+                <p>容器高度: {boxSize.height.toFixed(2)}px</p>
+            </div>
+            <div
+                ref={ref}
+                style={{
+                    padding: "20px",
+                    border: "2px dashed var(--rp-c-brand)",
+                    borderRadius: "8px",
+                    resize: "both",
+                    overflow: "auto",
+                    minWidth: "100px",
+                    minHeight: "100px",
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                }}
+            >
+                <p>拖拽右下角调整大小</p>
+                <p>这是一个可调整大小的容器</p>
+            </div>
+        </div>
+    );
+};
+
+export default BoxSizeDemo;
+```
+
+## API
+
+### useBoxSizeObserver()
+
+返回一个元组，包含以下元素：
+
+| 元素      | 类型                                | 描述                     |
+| --------- | ----------------------------------- | ------------------------ |
+| `ref`     | `React.RefObject<HTMLDivElement>`   | 需要绑定到目标元素的 ref |
+| `boxSize` | `{ width: number; height: number }` | 元素的当前尺寸           |
+
+## 特性
+
+1. **自动监听**：通过 ref 绑定到元素后，自动开始监听尺寸变化
+2. **实时更新**：元素尺寸变化时，立即更新返回的 boxSize 对象
+3. **自动清理**：组件卸载时自动断开 ResizeObserver 监听，避免内存泄漏
+
+## 使用场景
+
+1. **响应式布局**：根据容器大小动态调整布局方式
+2. **图表自适应**：容器大小变化时重新渲染图表
+3. **元素定位**：基于容器尺寸计算子元素位置
+4. **性能优化**：只在尺寸变化时触发重新渲染
+
+## 注意事项
+
+1. **初始值**：初始时 width 和 height 都为 0，在元素挂载后才会更新为实际尺寸
+2. **浏览器支持**：ResizeObserver API 在现代浏览器中广泛支持，但在 IE 中不可用
+3. **性能考虑**：ResizeObserver 的回调是异步触发的，不会阻塞主线程
+4. **依赖数组**：useEffect 的依赖数组为空，意味着监听器只在组件挂载时创建一次

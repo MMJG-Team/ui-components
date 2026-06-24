@@ -1,0 +1,164 @@
+# useAutoLoadMore 自动加载
+
+## 概述
+
+`useAutoLoadMore` 是一个 React 自定义钩子，用于自动触发加载更多功能。当滚动容器大小变化导致滚动条消失时，如果还有更多数据，会自动触发加载更多操作，解决用户无法通过滚动触发加载的问题。
+
+## 导入
+
+```tsx
+import { useAutoLoadMore } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useRef, useState } from "react";
+import { useAutoLoadMore, useEvent } from "@mmjg/ui-components";
+
+const AutoLoadMoreDemo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const ctx = useRef({
+        loadingLock: false,
+        hasMore: true,
+    });
+
+    const [items, setItems] = useState(
+        Array.from({ length: 5 }, (_, i) => i + 1),
+    );
+    const [loading, setLoading] = useState(false);
+
+    const handleLoadMore = useEvent((checkAgain) => {
+        // loading 是异步更新，因此这里需要加一个同步锁
+        if (ctx.current.loadingLock || !ctx.current.hasMore) return;
+
+        ctx.current.loadingLock = true;
+        setLoading(true);
+
+        // 模拟异步加载
+        setTimeout(() => {
+            const addCount = 10;
+
+            setItems((prev) => [
+                ...prev,
+                ...Array.from(
+                    { length: addCount },
+                    (_, i) => prev.length + i + 1,
+                ),
+            ]);
+
+            const count = items.length + addCount;
+
+            // 最多加载 50 条
+            if (count >= 50) {
+                ctx.current.hasMore = false;
+            }
+
+            ctx.current.loadingLock = false;
+            setLoading(false);
+
+            requestAnimationFrame(() => {
+                checkAgain();
+            });
+        }, 1000);
+    });
+
+    useAutoLoadMore(() => containerRef.current!, {
+        hasMore: ctx.current.hasMore,
+        checkInterval: {
+            scroll: 100,
+            resize: 500,
+        },
+        onLoadMore: handleLoadMore,
+    });
+
+    return (
+        <div>
+            <p
+                style={{
+                    opacity: 0.6,
+                    marginBottom: "10px",
+                }}
+            >
+                右下角拖动容器大小 或 滚动内容到底部，触发自动加载更多功能
+            </p>
+            <p>
+                当前条目数: {items.length} |{" "}
+                {ctx.current.hasMore ? "还有更多" : "已全部加载"}
+            </p>
+            <div
+                ref={containerRef}
+                style={{
+                    height: "200px",
+                    overflow: "auto",
+                    padding: "10px",
+                    minHeight: "200px",
+                    maxWidth: "100%",
+                    resize: "both",
+                    border: "1px dashed var(--rp-c-brand)",
+                    borderRadius: "4px",
+                }}
+            >
+                {items.map((item, index) => (
+                    <div
+                        key={index}
+                        style={{
+                            padding: "10px",
+                            margin: "5px 0",
+                            borderRadius: "4px",
+                            border: "1px solid #ccc",
+                        }}
+                    >
+                        条目 {item}
+                    </div>
+                ))}
+                {loading && (
+                    <div style={{ padding: "10px", textAlign: "center" }}>
+                        加载中...
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default AutoLoadMoreDemo;
+```
+
+## API
+
+### useAutoLoadMore(container, params)
+
+#### 参数
+
+| 参数                | 类型                               | 描述                         |
+| ------------------- | ---------------------------------- | ---------------------------- |
+| `container`         | `HTMLElement \| () => HTMLElement` | 滚动容器元素或返回元素的函数 |
+| `params`            | `object`                           | 配置参数                     |
+| `params.hasMore`    | `boolean`                          | 是否还有更多数据可加载       |
+| `params.onLoadMore` | `(check: () => void) => void`      | 加载更多回调函数             |
+
+#### 返回值
+
+返回一个对象，包含以下属性：
+
+| 属性                  | 类型         | 描述                           |
+| --------------------- | ------------ | ------------------------------ |
+| `checkShouldLoadMore` | `() => void` | 手动检查是否需要加载更多的函数 |
+
+## 使用场景
+
+1. **分页列表**：当窗口被拖拽变大时，滚动条可能消失，导致用户无法通过滚动触发加载更多
+2. **响应式布局**：在响应式布局中，容器大小变化时自动检查是否需要加载更多数据
+3. **动态内容**：当内容动态变化导致滚动条消失时，自动触发加载更多
+
+## 注意事项
+
+1. **防抖处理**：内部使用 1000ms 的防抖，避免频繁触发加载
+2. **容器引用**：可以传入容器元素或返回容器元素的函数，后者适用于容器元素动态变化的场景
+3. **加载时机**：会在以下两种情况下触发加载：
+    - 滚动容器没有滚动条（内容高度 ≤ 容器高度）
+    - 滚动容器已经滚动到底部
+4. **依赖更新**：当 `hasMore` 或 `onLoadMore` 变化时，会重新绑定监听器

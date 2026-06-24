@@ -1,0 +1,156 @@
+# useWindowSize 监听窗口大小
+
+## 概述
+
+`useWindowSize` 是一个 React 自定义钩子，用于监听浏览器窗口大小的变化。它返回当前窗口的宽度和高度，并在窗口大小变化时自动更新。
+
+## 导入
+
+```tsx
+import { useWindowSize } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React from "react";
+import { useWindowSize } from "@mmjg/ui-components";
+
+const WindowSizeDemo: React.FC = () => {
+    const windowSize = useWindowSize();
+
+    return (
+        <div
+            style={{
+                padding: "20px",
+                borderRadius: "8px",
+            }}
+        >
+            <h3>窗口尺寸信息</h3>
+            <p>窗口宽度: {windowSize.width}px</p>
+            <p>窗口高度: {windowSize.height}px</p>
+            <p>调整浏览器窗口大小以查看变化</p>
+        </div>
+    );
+};
+
+export default WindowSizeDemo;
+```
+
+### 自定义断点
+
+```tsx preview
+import React from "react";
+import { useWindowSize } from "@mmjg/ui-components";
+
+const BreakpointDemo: React.FC = () => {
+    const windowSize = useWindowSize();
+
+    const breakpoints = {
+        xs: 0,
+        sm: 576,
+        md: 768,
+        lg: 992,
+        xl: 1200,
+        xxl: 1400,
+    };
+
+    const getCurrentBreakpoint = () => {
+        const width = windowSize.width;
+        if (width >= breakpoints.xxl) return "xxl";
+        if (width >= breakpoints.xl) return "xl";
+        if (width >= breakpoints.lg) return "lg";
+        if (width >= breakpoints.md) return "md";
+        if (width >= breakpoints.sm) return "sm";
+        return "xs";
+    };
+
+    const currentBreakpoint = getCurrentBreakpoint();
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "20px",
+                    borderRadius: "8px",
+                    marginBottom: "10px",
+                }}
+            >
+                <h3>当前断点: {currentBreakpoint.toUpperCase()}</h3>
+                <p>窗口宽度: {windowSize.width}px</p>
+            </div>
+            <div
+                style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "10px",
+                }}
+            >
+                {Object.entries(breakpoints).map(([name, value]) => (
+                    <div
+                        key={name}
+                        style={{
+                            padding: "2px 16px",
+                            background:
+                                currentBreakpoint === name
+                                    ? "var(--rp-c-brand)"
+                                    : "#fff",
+                            color: currentBreakpoint === name ? "#fff" : "#000",
+                            border: "1px solid var(--rp-c-brand)",
+                            borderRadius: "4px",
+                        }}
+                    >
+                        {name.toUpperCase()}: {value}px+
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default BreakpointDemo;
+```
+
+## API
+
+### useWindowSize()
+
+返回一个对象，包含以下属性：
+
+| 属性     | 类型     | 描述           |
+| -------- | -------- | -------------- |
+| `width`  | `number` | 窗口的当前宽度 |
+| `height` | `number` | 窗口的当前高度 |
+
+## 特性
+
+1. **自动监听**：组件挂载时自动添加 resize 事件监听
+2. **自动清理**：组件卸载时自动移除事件监听，避免内存泄漏
+3. **初始值**：初始值直接使用 `window.innerWidth` 和 `window.innerHeight`
+4. **响应式更新**：窗口大小变化时自动更新状态
+
+## 使用场景
+
+1. **响应式布局**：根据窗口大小动态调整布局方式
+2. **条件渲染**：根据窗口大小显示或隐藏某些元素
+3. **图表自适应**：窗口大小变化时重新计算图表尺寸
+4. **移动端适配**：检测设备类型，提供不同的用户体验
+
+## 注意事项
+
+1. **服务端渲染**：在服务端渲染环境中使用时需要注意 `window` 对象不存在的问题
+2. **性能优化**：如果需要在 resize 时执行复杂计算，建议配合防抖或节流使用
+3. **初始值**：初始值在组件首次渲染时就已确定，不会等待 useEffect 执行
+4. **依赖数组**：useEffect 的依赖数组为空，意味着监听器只在组件挂载时添加一次
+
+## 与 CSS 媒体查询的区别
+
+| 特性     | useWindowSize                | CSS 媒体查询   |
+| -------- | ---------------------------- | -------------- |
+| 使用场景 | JavaScript 逻辑控制          | 样式控制       |
+| 响应速度 | 需要等待 React 重新渲染      | 浏览器原生支持 |
+| 灵活性   | 可以执行任意 JavaScript 逻辑 | 仅限于样式变化 |
+| 性能     | 可能触发组件重新渲染         | 性能更好       |
+| 适用场景 | 复杂的响应式逻辑             | 简单的样式适配 |

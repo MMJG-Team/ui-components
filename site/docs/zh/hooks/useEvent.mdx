@@ -1,0 +1,174 @@
+# useEvent 事件缓存
+
+## 概述
+
+`useEvent` 是一个 React 自定义钩子，用于优化事件处理函数。它通过保持函数引用的稳定性，避免因函数重新创建导致的子组件不必要的重新渲染，同时确保回调函数始终能访问到最新的状态。
+
+## 导入
+
+```tsx
+import { useEvent } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useState, useCallback } from "react";
+import { useEvent } from "@mmjg/ui-components";
+
+const EventDemo: React.FC = () => {
+    const [count, setCount] = useState(0);
+    const [clickCount, setClickCount] = useState(0);
+
+    // 使用 useEvent 保持函数引用稳定
+    const handleClick = useEvent(() => {
+        setClickCount((prev) => prev + 1);
+        console.log("当前计数:", count);
+    });
+
+    // 对比：普通函数会在每次渲染时重新创建
+    const handleNormalClick = () => {
+        console.log("普通函数被重新创建");
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: "10px" }}>
+                <p>计数器: {count}</p>
+                <button onClick={() => setCount(count + 1)}>增加计数</button>
+            </div>
+            <div style={{ marginBottom: "10px" }}>
+                <p>点击次数: {clickCount}</p>
+                <button onClick={handleClick}>点击我 (useEvent)</button>
+            </div>
+        </div>
+    );
+};
+
+export default EventDemo;
+```
+
+### 与 useCallback 对比
+
+```tsx preview
+import React, { useState, useCallback, memo } from "react";
+import { useEvent } from "@mmjg/ui-components";
+
+// 子组件
+const ExpensiveButton = memo(
+    ({ onClick, label }: { onClick: () => void; label: string }) => {
+        console.log(`${label} 按钮渲染`);
+        return (
+            <button
+                onClick={onClick}
+                style={{
+                    padding: "8px 16px",
+                    marginRight: "10px",
+                    borderRadius: "4px",
+                }}
+            >
+                {label}
+            </button>
+        );
+    },
+);
+
+const CompareDemo: React.FC = () => {
+    const [count, setCount] = useState(0);
+
+    // 使用 useCallback - 依赖 count，count 变化时函数会重新创建
+    const handleClickWithCallback = useCallback(() => {
+        console.log("useCallback - count:", count);
+    }, [count]);
+
+    // 使用 useEvent - 函数引用永远不变，但能访问最新的 count
+    const handleClickWithEvent = useEvent(() => {
+        console.log("useEvent - count:", count);
+    });
+
+    return (
+        <div>
+            <p>计数: {count}</p>
+            <button
+                onClick={() => setCount(count + 1)}
+                style={{ marginBottom: "10px" }}
+            >
+                增加计数
+            </button>
+            <div>
+                <ExpensiveButton
+                    onClick={handleClickWithCallback}
+                    label="useCallback"
+                />
+                <ExpensiveButton
+                    onClick={handleClickWithEvent}
+                    label="useEvent"
+                />
+            </div>
+            <p style={{ fontSize: "12px", color: "#666", marginTop: "10px" }}>
+                打开控制台查看渲染日志，useEvent 的函数引用更稳定
+            </p>
+        </div>
+    );
+};
+
+export default CompareDemo;
+```
+
+## API
+
+### useEvent\<T\>(callback)
+
+#### 参数
+
+| 参数       | 类型 | 描述                   |
+| ---------- | ---- | ---------------------- |
+| `callback` | `T`  | 需要优化的事件处理函数 |
+
+#### 返回值
+
+返回一个稳定的函数引用，类型与传入的 callback 相同。
+
+## 工作原理
+
+```typescript
+function useEvent<T extends (...args: any[]) => any>(callback: T) {
+    const callbackRef = useRef(callback);
+
+    // 每次渲染时更新 ref 中的回调函数
+    callbackRef.current = callback;
+
+    // 返回一个稳定的函数，通过 ref 调用最新的回调
+    return useCallback(
+        (...args: Parameters<T>): ReturnType<T> => {
+            return callbackRef.current(...args);
+        },
+        [callback],
+    );
+}
+```
+
+## 与 useCallback 的区别
+
+| 特性           | useCallback                        | useEvent                         |
+| -------------- | ---------------------------------- | -------------------------------- |
+| 函数引用稳定性 | 依赖项变化时会重新创建             | 永远保持稳定                     |
+| 访问最新状态   | 需要将状态加入依赖数组             | 自动访问最新状态                 |
+| 子组件重新渲染 | 依赖项变化时可能触发子组件重新渲染 | 不会因函数变化触发子组件重新渲染 |
+| 使用复杂度     | 需要手动管理依赖数组               | 无需管理依赖数组                 |
+
+## 使用场景
+
+1. **事件处理器优化**：避免因父组件状态变化导致子组件不必要的重新渲染
+2. **回调函数传递**：将回调函数传递给 memo 化的子组件时保持引用稳定
+3. **访问最新状态**：在事件处理器中访问最新的状态，而无需将状态加入依赖数组
+4. **性能优化**：减少因函数重新创建导致的性能开销
+
+## 注意事项
+
+1. **适用范围**：主要用于事件处理函数，不适用于需要作为依赖项的场景
+2. **闭包问题**：虽然能访问最新状态，但函数引用本身是稳定的
+3. **依赖数组**：虽然实现中使用了 `[callback]` 作为依赖，但返回的函数引用始终保持稳定
+4. **类型安全**：完全保留原函数的类型信息，包括参数和返回值类型

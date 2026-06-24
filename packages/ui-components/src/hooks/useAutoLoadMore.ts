@@ -1,6 +1,8 @@
 import { debounce } from "lodash-es"
 import useEvent from "./useEvent"
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
+
+const DEFAULT_CHECK_INTERVAL = 1000
 
 /**
  * 自动加载更多
@@ -12,14 +14,37 @@ import { useEffect } from "react"
  */
 export function useAutoLoadMore(container: HTMLElement | (() => HTMLElement), params: {
     hasMore: boolean
+    checkInterval?: number | {
+        scroll?: number,
+        resize?: number,
+    }
     onLoadMore: (check: () => void) => void
 }) {
+    const { checkInterval = DEFAULT_CHECK_INTERVAL } = params ?? {}
+
+    const {
+        scroll: scrollInterval = DEFAULT_CHECK_INTERVAL,
+        resize: resizeInterval = DEFAULT_CHECK_INTERVAL
+    } = useMemo(() => {
+        if (typeof checkInterval === 'number') {
+            return {
+                scroll: checkInterval,
+                resize: checkInterval,
+            }
+        }
+
+        return checkInterval
+    }, [checkInterval])
 
     const resolveContainer = () => {
         return typeof container === 'function' ? container() : container
     }
 
-    const checkShouldLoadMore = useEvent(debounce(() => {
+    /**
+     * 检查是否需要加载更多
+     * @returns 
+     */
+    const checkShouldLoadMore = () => {
         const scrollElement = resolveContainer()
         if (!scrollElement) {
             return
@@ -35,12 +60,15 @@ export function useAutoLoadMore(container: HTMLElement | (() => HTMLElement), pa
          */
         if (
             scrollElement.scrollHeight <= scrollElement.clientHeight ||
-            scrollElement.scrollTop + scrollElement.clientHeight >= scrollElement.scrollHeight
+            Math.ceil(scrollElement.scrollTop) + Math.ceil(scrollElement.clientHeight) >= scrollElement.scrollHeight
         ) {
             params.onLoadMore?.(checkShouldLoadMore)
             return
         }
-    }, 1000))
+    }
+
+    const checkForResize = useEvent(debounce(checkShouldLoadMore, resizeInterval))
+    const checkForScroll = useEvent(debounce(checkShouldLoadMore, scrollInterval))
 
     useEffect(() => {
         const scrollElement = resolveContainer()
@@ -48,14 +76,16 @@ export function useAutoLoadMore(container: HTMLElement | (() => HTMLElement), pa
             return
         }
 
-        const observer = new ResizeObserver(() => {
-            checkShouldLoadMore()
-        })
-
+        // 监听滚动容器大小变化
+        const observer = new ResizeObserver(() => checkForResize())
         observer.observe(scrollElement)
 
+        // 监听滚动事件
+        scrollElement.addEventListener('scroll', checkForScroll)
+
         return () => {
-            observer.disconnect()
+            observer.disconnect();
+            scrollElement.removeEventListener('scroll', checkForScroll)
         }
     }, [params.hasMore, params.onLoadMore])
 
