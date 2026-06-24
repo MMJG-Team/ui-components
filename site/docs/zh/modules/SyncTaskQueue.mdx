@@ -4,6 +4,8 @@
 
 `SyncTaskQueue` 是一个同步阻塞队列管理器，用于按顺序执行异步任务。它确保任务按照添加顺序依次执行，避免并发执行带来的竞态问题，并提供任务完成的事件通知机制。
 
+特别适用于前端流式数据渲染场景，确保服务端返回的数据按顺序依次渲染，避免数据错乱或渲染顺序不一致的问题。
+
 ## 导入
 
 ```tsx
@@ -12,25 +14,28 @@ import { SyncTaskQueue, SyncTaskQueueEventType } from "@mmjg/ui-components";
 
 ## 使用示例
 
-### 基本使用
+### 流式数据打字机效果渲染
+
+这个示例展示了如何使用 `SyncTaskQueue` 来处理服务端流式返回的数据，确保每个数据片段按顺序完成打字机效果渲染后再处理下一个片段。
 
 ```tsx preview
 import React, { useRef, useState, useEffect } from "react";
 import { SyncTaskQueue, SyncTaskQueueEventType } from "@mmjg/ui-components";
 
-const TaskQueueDemo: React.FC = () => {
+const TypewriterDemo: React.FC = () => {
     const queueRef = useRef(new SyncTaskQueue());
-    const [tasks, setTasks] = useState<string[]>([]);
-    const [running, setRunning] = useState(false);
-    const [completed, setCompleted] = useState(false);
+    const [displayText, setDisplayText] = useState("");
+    const [isRendering, setIsRendering] = useState(false);
+    const [queueLength, setQueueLength] = useState(0);
+    const [receivedChunks, setReceivedChunks] = useState<string[]>([]);
 
     useEffect(() => {
         const queue = queueRef.current;
 
         // 监听队列完成事件
         queue.event.on(SyncTaskQueueEventType.Completed, () => {
-            setCompleted(true);
-            setRunning(false);
+            setIsRendering(false);
+            console.log("所有渲染任务已完成");
         });
 
         return () => {
@@ -38,77 +43,136 @@ const TaskQueueDemo: React.FC = () => {
         };
     }, []);
 
-    const addTask = () => {
-        const taskId = `任务-${tasks.length + 1}`;
-        setTasks((prev) => [...prev, taskId]);
+    // 打字机效果渲染函数
+    const typewriterRender = async (text: string) => {
+        setIsRendering(true);
 
-        queueRef.current.add(async () => {
-            setRunning(true);
-            setCompleted(false);
-            console.log(`开始执行: ${taskId}`);
+        // 逐字渲染，每个字符延迟 50ms
+        for (let i = 0; i < text.length; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 50));
+            setDisplayText((prev) => prev + text[i]);
+        }
+    };
 
-            // 模拟异步任务
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+    // 模拟服务端流式返回数据
+    const simulateStreamData = () => {
+        if (isRendering) {
+            return;
+        }
 
-            console.log(`完成执行: ${taskId}`);
+        const chunks = ["Hello, ", "this is ", "a stream ", "data demo!"];
+
+        chunks.forEach((chunk, index) => {
+            // 记录接收到的数据片段
+            setReceivedChunks((prev) => [...prev, chunk]);
+
+            // 添加渲染任务到队列
+            queueRef.current.add(async () => {
+                console.log(`开始渲染片段 ${index + 1}: "${chunk}"`);
+                await typewriterRender(chunk);
+                console.log(`完成渲染片段 ${index + 1}: "${chunk}"`);
+
+                // 更新队列长度
+                setQueueLength(queueRef.current.queue.length);
+            });
+
+            // 更新队列长度
+            setQueueLength(queueRef.current.queue.length);
         });
     };
 
-    const clearQueue = () => {
+    // 清空文本和队列
+    const clearAll = () => {
         queueRef.current.clear();
-        setTasks([]);
-        setRunning(false);
-        setCompleted(false);
+        setDisplayText("");
+        setIsRendering(false);
+        setQueueLength(0);
+        setReceivedChunks([]);
     };
 
     return (
         <div>
-            <div style={{ marginBottom: "10px" }}>
+            <div style={{ marginBottom: "20px" }}>
                 <button
-                    onClick={addTask}
+                    onClick={simulateStreamData}
                     style={{
-                        padding: "8px 16px",
+                        padding: "2px 16px",
                         marginRight: "10px",
                         borderRadius: "4px",
+                        cursor: isRendering ? "not-allowed" : "pointer",
+                        opacity: isRendering ? 0.6 : 1,
                     }}
                 >
-                    添加任务
+                    {isRendering ? "渲染中..." : "模拟流式数据"}
                 </button>
                 <button
-                    onClick={clearQueue}
+                    onClick={clearAll}
                     style={{
-                        padding: "8px 16px",
+                        padding: "2px 16px",
                         borderRadius: "4px",
+                        cursor: "pointer",
                     }}
                 >
-                    清空队列
+                    清空
                 </button>
             </div>
 
             <div
                 style={{
                     padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
                     borderRadius: "4px",
                     marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
                 }}
             >
-                <p>
-                    状态: {running ? "执行中" : completed ? "已完成" : "等待中"}
+                <p style={{ margin: "5px 0" }}>
+                    状态: {isRendering ? "渲染中" : "等待中"}
                 </p>
-                <p>队列长度: {tasks.length}</p>
+                <p style={{ margin: "5px 0" }}>队列长度: {queueLength}</p>
+                <p style={{ margin: "5px 0" }}>
+                    已接收片段: {receivedChunks.length}
+                </p>
             </div>
 
             <div
                 style={{
-                    padding: "10px",
-                    border: "1px solid #ccc",
+                    padding: "20px",
+                    background: "var(--rp-c-bg)",
+                    border: "1px dashed var(--rp-c-brand)",
                     borderRadius: "4px",
+                    minHeight: "100px",
+                    fontFamily: "monospace",
+                    fontSize: "16px",
+                    color: "var(--rp-c-text-1)",
                 }}
             >
-                <p>任务列表:</p>
-                <ul>
-                    {tasks.map((task, index) => (
-                        <li key={index}>{task}</li>
+                <p style={{ margin: 0 }}>
+                    {displayText}
+                    {isRendering && (
+                        <span style={{ color: "var(--rp-c-brand)" }}>|</span>
+                    )}
+                </p>
+            </div>
+
+            <div
+                style={{
+                    marginTop: "10px",
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    fontSize: "12px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: 0, fontWeight: "bold" }}>
+                    数据片段接收顺序:
+                </p>
+                <ul style={{ margin: "5px 0", paddingInlineStart: "20px" }}>
+                    {receivedChunks.map((chunk, index) => (
+                        <li key={index}>
+                            片段 {index + 1}: "{chunk}"
+                        </li>
                     ))}
                 </ul>
             </div>
@@ -116,7 +180,169 @@ const TaskQueueDemo: React.FC = () => {
     );
 };
 
-export default TaskQueueDemo;
+export default TypewriterDemo;
+```
+
+### 多段落流式渲染
+
+这个示例展示了如何处理多个段落的流式数据，确保每个段落完整渲染后再开始下一个段落。
+
+```tsx preview
+import React, { useRef, useState, useEffect } from "react";
+import { SyncTaskQueue, SyncTaskQueueEventType } from "@mmjg/ui-components";
+
+const ParagraphStreamDemo: React.FC = () => {
+    const queueRef = useRef(new SyncTaskQueue());
+    const [paragraphs, setParagraphs] = useState<string[]>([]);
+    const [currentParagraphIndex, setCurrentParagraphIndex] = useState(-1);
+    const [currentParagraphText, setCurrentParagraphText] = useState("");
+    const [isRendering, setIsRendering] = useState(false);
+
+    useEffect(() => {
+        const queue = queueRef.current;
+
+        queue.event.on(SyncTaskQueueEventType.Completed, () => {
+            setIsRendering(false);
+            setCurrentParagraphIndex(-1);
+        });
+
+        return () => {
+            queue.event.off(SyncTaskQueueEventType.Completed);
+        };
+    }, []);
+
+    // 段落打字机渲染
+    const renderParagraph = async (paragraph: string, index: number) => {
+        setCurrentParagraphIndex(index);
+        setCurrentParagraphText("");
+
+        // 逐字渲染
+        for (let i = 0; i < paragraph.length; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            setCurrentParagraphText((prev) => prev + paragraph[i]);
+        }
+
+        // 段落渲染完成，添加到已完成的段落列表
+        setParagraphs((prev) => [...prev, paragraph]);
+    };
+
+    // 模拟服务端流式返回多个段落
+    const simulateMultiParagraphStream = () => {
+        const paragraphData = [
+            "这是第一段内容，展示了流式数据渲染的效果。",
+            "第二段内容会在第一段完全渲染完成后才开始渲染。",
+            "最后一段内容，确保了数据的顺序性和完整性。",
+        ];
+
+        paragraphData.forEach((paragraph, index) => {
+            queueRef.current.add(async () => {
+                setIsRendering(true);
+                await renderParagraph(paragraph, index);
+            });
+        });
+    };
+
+    const clearAll = () => {
+        queueRef.current.clear();
+        setParagraphs([]);
+        setCurrentParagraphIndex(-1);
+        setCurrentParagraphText("");
+        setIsRendering(false);
+    };
+
+    return (
+        <div>
+            <div style={{ marginBottom: "20px" }}>
+                <button
+                    onClick={simulateMultiParagraphStream}
+                    style={{
+                        padding: "2px 16px",
+                        marginRight: "10px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                    }}
+                >
+                    {isRendering ? "继续推送" : "开始流式渲染"}
+                </button>
+                <button
+                    onClick={clearAll}
+                    style={{
+                        padding: "2px 16px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                    }}
+                >
+                    清空
+                </button>
+            </div>
+
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>
+                    当前段落:{" "}
+                    {currentParagraphIndex >= 0
+                        ? currentParagraphIndex + 1
+                        : "-"}
+                </p>
+                <p style={{ margin: "5px 0" }}>
+                    已完成段落: {paragraphs.length}
+                </p>
+                <p style={{ margin: "5px 0" }}>
+                    队列长度: {queueRef.current.queue.length}
+                </p>
+            </div>
+
+            <div
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg)",
+                    border: "1px dashed var(--rp-c-brand)",
+                    borderRadius: "4px",
+                    minHeight: "150px",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                {/* 已完成的段落 */}
+                {paragraphs.map((para, index) => (
+                    <p
+                        key={index}
+                        style={{
+                            margin: "10px 0",
+                            lineHeight: "1.6",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        {para}
+                    </p>
+                ))}
+
+                {/* 当前正在渲染的段落 */}
+                {currentParagraphIndex >= 0 && (
+                    <p
+                        style={{
+                            margin: "10px 0",
+                            lineHeight: "1.6",
+                            color: "var(--rp-c-text-2)",
+                            fontFamily: "monospace",
+                        }}
+                    >
+                        {currentParagraphText}
+                        <span style={{ color: "var(--rp-c-brand)" }}>|</span>
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default ParagraphStreamDemo;
 ```
 
 ## API
@@ -179,10 +405,20 @@ type SyncTaskQueueEvents = {
 
 ## 使用场景
 
-1. **文件上传**：确保文件按顺序上传，避免并发上传导致的资源竞争
-2. **API 请求**：按顺序执行 API 请求，确保请求顺序和响应顺序一致
-3. **数据处理**：按顺序处理数据，避免并发处理导致的数据错乱
-4. **动画序列**：按顺序执行动画效果，确保动画按照预期顺序播放
+1. **流式数据渲染**：确保服务端流式返回的数据按顺序渲染，避免数据错乱
+2. **打字机效果**：实现打字机效果时，确保每个数据片段按顺序完成渲染
+3. **多段落渲染**：处理多个段落的流式数据，确保段落完整性
+4. **文件上传**：确保文件按顺序上传，避免并发上传导致的资源竞争
+5. **API 请求**：按顺序执行 API 请求，确保请求顺序和响应顺序一致
+
+## 流式数据渲染的优势
+
+在流式数据渲染场景中，`SyncTaskQueue` 提供了以下优势：
+
+1. **顺序保证**：确保数据片段按照服务端返回的顺序依次渲染
+2. **完整性保证**：每个数据片段完整渲染后才处理下一个片段
+3. **用户体验**：避免数据错乱或渲染顺序不一致导致的视觉混乱
+4. **资源管理**：避免并发渲染导致的性能问题
 
 ## 注意事项
 
@@ -191,6 +427,7 @@ type SyncTaskQueueEvents = {
 3. **内存管理**：任务完成后会自动从队列中移除
 4. **事件监听**：建议在组件卸载时移除事件监听，避免内存泄漏
 5. **清空队列**：调用 `clear` 方法会立即停止执行并清空队列
+6. **渲染性能**：打字机效果的延迟时间需要根据实际需求调整，避免过慢或过快
 
 ## 与 Promise 队列的区别
 
@@ -201,3 +438,4 @@ type SyncTaskQueueEvents = {
 | 事件通知 | 提供完成事件           | 需要手动实现             |
 | 错误处理 | 错误会中断后续任务     | 需要单独处理每个 Promise |
 | 使用场景 | 需要严格顺序执行的场景 | 可以并发执行的场景       |
+| 流式渲染 | 完美适配流式数据渲染   | 不适合顺序渲染场景       |
