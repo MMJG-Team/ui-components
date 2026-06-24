@@ -6,6 +6,7 @@ on:
         paths:
             - ".github/workflows/deploy-docs.yml"
             - "packages/**"
+            - "site/**"
             - "package.json"
             - "repress.config.ts"
             - "pnpm-lock.yaml"

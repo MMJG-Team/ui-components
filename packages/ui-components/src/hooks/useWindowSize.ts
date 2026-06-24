@@ -1,14 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
+const getWindowSize = () => (typeof window !== 'undefined' ? {
+    width: window.innerWidth,
+    height: window.innerHeight,
+} : {
+    width: 0,
+    height: 0,
+})
 
 /**
  * 监听窗口大小变化
  * @returns 窗口大小
  */
 export function useWindowSize() {
-    const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight,
-    })
+    const [windowSize, setWindowSize] = useState(getWindowSize())
 
     useEffect(() => {
         const handleResize = () => {
