@@ -1,0 +1,241 @@
+# useMounted 组件挂载状态
+
+## 概述
+
+`useMounted` 是一个 React 自定义钩子，用于监听组件的挂载和卸载状态。它提供组件是否已挂载的状态标识，并支持在挂载和卸载时执行回调函数，适用于需要等待组件挂载后执行操作的场景。
+
+## 导入
+
+```tsx
+import { useMounted } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React from "react";
+import { useMounted } from "@mmjg/ui-components";
+
+const MountedDemo: React.FC = () => {
+    const { mounted } = useMounted();
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>
+                    组件状态: {mounted ? "已挂载" : "未挂载"}
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                    mounted 状态在组件挂载后会变为 true
+                </p>
+            </div>
+
+            <div
+                style={{
+                    padding: "20px",
+                    background: mounted ? "var(--rp-c-brand)" : "var(--rp-c-bg-soft)",
+                    borderRadius: "8px",
+                    textAlign: "center",
+                    color: mounted ? "var(--rp-c-bg)" : "var(--rp-c-text-2)",
+                    transition: "all 0.3s ease",
+                }}
+            >
+                {mounted ? "组件已挂载，可以安全访问 DOM" : "组件正在挂载..."}
+            </div>
+        </div>
+    );
+};
+
+export default MountedDemo;
+```
+
+### 挂载和卸载回调
+
+```tsx preview
+import React, { useState } from "react";
+import { useMounted } from "@mmjg/ui-components";
+
+const CallbackDemo: React.FC = () => {
+    const [logs, setLogs] = useState<string[]>([]);
+
+    const { mounted } = useMounted(
+        () => {
+            // 组件挂载时执行
+            setLogs((prev) => [...prev, "组件已挂载"]);
+            console.log("组件挂载回调执行");
+        },
+        () => {
+            // 组件卸载时执行
+            setLogs((prev) => [...prev, "组件已卸载"]);
+            console.log("组件卸载回调执行");
+        }
+    );
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>挂载状态: {mounted ? "已挂载" : "未挂载"}</p>
+            </div>
+
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg)",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <p style={{ margin: "0 0 10px 0", fontWeight: "bold" }}>生命周期日志:</p>
+                <ul style={{ margin: 0, paddingInlineStart: "20px" }}>
+                    {logs.map((log, index) => (
+                        <li key={index} style={{ marginBottom: "5px" }}>
+                            {log}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
+    );
+};
+
+export default CallbackDemo;
+```
+
+### 服务端渲染兼容
+
+```tsx preview
+import React from "react";
+import { useMounted } from "@mmjg/ui-components";
+
+const SSRDemo: React.FC = () => {
+    const { mounted } = useMounted();
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>
+                    SSR 兼容性演示
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                    在服务端渲染时，mounted 为 false，避免访问浏览器 API
+                </p>
+            </div>
+
+            <div
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg)",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "8px",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                {mounted ? (
+                    <div>
+                        <p style={{ margin: "0 0 10px 0" }}>客户端渲染内容:</p>
+                        <p style={{ margin: 0 }}>
+                            当前窗口宽度: {window.innerWidth}px
+                        </p>
+                    </div>
+                ) : (
+                    <div>
+                        <p style={{ margin: 0 }}>服务端渲染占位内容</p>
+                        <p style={{ margin: "5px 0 0 0", fontSize: "12px", color: "var(--rp-c-text-2)" }}>
+                            等待客户端挂载后显示真实内容
+                        </p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default SSRDemo;
+```
+
+## API
+
+### useMounted(onMounted?, onUnmounted?)
+
+#### 参数
+
+| 参数          | 类型         | 描述                       |
+| ------------- | ------------ | -------------------------- |
+| `onMounted`   | `() => void` | 组件挂载时执行的回调函数   |
+| `onUnmounted` | `() => void` | 组件卸载时执行的回调函数   |
+
+#### 返回值
+
+返回一个对象，包含以下属性：
+
+| 属性      | 类型      | 描述               |
+| --------- | --------- | ------------------ |
+| `mounted` | `boolean` | 组件是否已挂载     |
+
+## 工作原理
+
+1. **初始状态**：组件首次渲染时，`mounted` 为 `false`
+2. **挂载触发**：`useEffect` 执行时，将 `mounted` 设置为 `true`，并执行 `onMounted` 回调
+3. **卸载触发**：组件卸载时，将 `mounted` 设置为 `false`，并执行 `onUnmounted` 回调
+4. **依赖数组**：`useEffect` 的依赖数组为空，确保回调只在挂载和卸载时执行
+
+## 使用场景
+
+1. **SSR 兼容**：在服务端渲染环境中，避免访问浏览器 API（如 `window`、`document`）
+2. **DOM 操作**：等待组件挂载后安全访问 DOM 元素
+3. **动画初始化**：在组件挂载后初始化动画或第三方库
+4. **数据加载**：在组件挂载后触发数据加载
+5. **生命周期追踪**：记录组件的挂载和卸载事件，用于调试或性能监控
+
+## 注意事项
+
+1. **初始渲染**：在首次渲染时，`mounted` 为 `false`，需要处理未挂载状态的渲染
+2. **回调时机**：`onMounted` 和 `onUnmounted` 回调在 `useEffect` 中执行，不会阻塞渲染
+3. **依赖数组**：回调函数的依赖数组为空，确保只执行一次
+4. **服务端渲染**：在 SSR 环境中，`mounted` 始终为 `false`，避免访问浏览器 API
+5. **清理工作**：建议在 `onUnmounted` 中执行清理工作，如取消订阅、清除定时器等
+
+## 与 useEffect 的区别
+
+| 特性         | useMounted              | useEffect               |
+| ------------ | ----------------------- | ----------------------- |
+| 状态追踪     | 提挂载状态标识          | 无状态标识              |
+| 回调支持     | 支持挂载和卸载回调      | 需要手动处理            |
+| SSR 兼容     | 明确的挂载状态判断      | 需要额外处理            |
+| 使用便捷性   | 简洁直观                | 需要更多代码            |
+| 适用场景     | 挂载状态判断和回调      | 通用副作用处理          |
+
+## 最佳实践
+
+1. **SSR 场景**：使用 `mounted` 判断是否可以访问浏览器 API，避免 SSR 错误
+2. **条件渲染**：根据 `mounted` 状态渲染不同的内容，提供更好的用户体验
+3. **回调清理**：在 `onUnmounted` 中执行清理工作，避免内存泄漏
+4. **调试日志**：在回调中添加日志，追踪组件的生命周期
+5. **性能优化**：避免在回调中执行耗时操作，影响组件渲染性能

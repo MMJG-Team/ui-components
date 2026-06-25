@@ -1,0 +1,267 @@
+# Menu3D 3D旋转菜单
+
+Menu3D 是一个炫酷的 3D 旋转菜单组件，支持自动旋转、鼠标拖拽控制和交互式菜单选择。 🎯
+
+- **3D视觉效果** 🔍：使用 CSS 3D transform 实现立体旋转效果
+- **自动旋转** 📱：默认自动旋转，鼠标悬停时暂停
+- **拖拽控制** ⚡：支持鼠标拖拽调整旋转角度
+- **交互式菜单** 📐：点击菜单项触发回调事件
+- **流畅动画** 🎨：使用 requestAnimationFrame 实现流畅的旋转动画
+
+## 代码演示 📝
+
+### 基本用法 🔧
+
+```tsx preview
+import React from "react";
+import { Menu3D } from "@mmjg/ui-components";
+
+const BasicDemo: React.FC = () => {
+    const menus = [
+        {
+            id: "home",
+            type: "link",
+            title: "首页",
+            icon: <span style={{ fontSize: "24px" }}>🏠</span>,
+        },
+        {
+            id: "projects",
+            type: "link",
+            title: "项目",
+            icon: <span style={{ fontSize: "24px" }}>📁</span>,
+        },
+        {
+            id: "docs",
+            type: "link",
+            title: "文档",
+            icon: <span style={{ fontSize: "24px" }}>📚</span>,
+        },
+        {
+            id: "blog",
+            type: "link",
+            title: "博客",
+            icon: <span style={{ fontSize: "24px" }}>📝</span>,
+        },
+        {
+            id: "about",
+            type: "link",
+            title: "关于",
+            icon: <span style={{ fontSize: "24px" }}>👤</span>,
+        },
+        {
+            id: "officialWebsite",
+            type: "link",
+            title: "官网",
+            icon: <span style={{ fontSize: "24px" }}>🌐</span>,
+        },
+        {
+            id: "contact",
+            type: "link",
+            title: "联系我们",
+            icon: <span style={{ fontSize: "24px" }}>📞</span>,
+        },
+    ];
+
+    const handleMenuClick = (menuId: string) => {
+        console.log("点击菜单:", menuId);
+        alert(`点击了菜单: ${menuId}`);
+    };
+
+    return (
+        <div
+            style={{
+                height: "400px",
+                position: "relative",
+                transform: "translateZ(0)",
+            }}
+        >
+            <Menu3D menus={menus} onMenuClick={handleMenuClick} />
+        </div>
+    );
+};
+
+export default BasicDemo;
+```
+
+### 自定义渲染菜单
+
+```tsx preview
+import React from "react";
+import { Menu3D } from "@mmjg/ui-components";
+
+const CustomDemo: React.FC = () => {
+    const menus = [
+        {
+            id: "home",
+            type: "link",
+            title: "首页",
+            icon: <span style={{ fontSize: "24px" }}>🏠</span>,
+        },
+        {
+            id: "projects",
+            type: "link",
+            title: "项目",
+            icon: <span style={{ fontSize: "24px" }}>📁</span>,
+        },
+        {
+            id: "docs",
+            type: "link",
+            title: "文档",
+            icon: <span style={{ fontSize: "24px" }}>📚</span>,
+        },
+        {
+            id: "blog",
+            type: "link",
+            title: "博客",
+            icon: <span style={{ fontSize: "24px" }}>📝</span>,
+        },
+        {
+            id: "about",
+            type: "link",
+            title: "关于",
+            icon: <span style={{ fontSize: "24px" }}>👤</span>,
+        },
+        {
+            id: "officialWebsite",
+            type: "link",
+            title: "官网",
+            icon: <span style={{ fontSize: "24px" }}>🌐</span>,
+        },
+        {
+            id: "contact",
+            type: "link",
+            title: "联系我们",
+            icon: <span style={{ fontSize: "24px" }}>📞</span>,
+        },
+    ];
+
+    const handleMenuClick = (menuId: string) => {
+        console.log("点击菜单:", menuId);
+        alert(`点击了菜单: ${menuId}`);
+    };
+
+    return (
+        <div
+            style={{
+                height: "400px",
+                position: "relative",
+                transform: "translateZ(0)",
+            }}
+        >
+            <Menu3D
+                menus={menus}
+                onMenuClick={handleMenuClick}
+                customItemRender={({ id, title, icon }) => (
+                    <div
+                        key={id}
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            width: "100px",
+                            height: "100px",
+                            border: "1px dashed var(--rp-c-brand)",
+                        }}
+                    >
+                        {icon}
+                        <span>{title}</span>
+                    </div>
+                )}
+            />
+        </div>
+    );
+};
+
+export default CustomDemo;
+```
+
+## API 📚
+
+### Menu3DProps ⚙️
+
+| 属性        | 说明             | 类型                       | 默认值 | 版本 |
+| ----------- | ---------------- | -------------------------- | ------ | ---- |
+| menus       | 菜单数据数组     | `Menu[]`                   | -      | -    |
+| onMenuClick | 菜单点击回调函数 | `(menuId: string) => void` | -      | -    |
+
+### Menu 类型定义 🔖
+
+```typescript
+type Menu = {
+    id: string;
+    type: string;
+    title: string;
+    icon: React.ReactNode;
+};
+```
+
+## 特性说明 🎯
+
+### 3D旋转效果
+
+组件使用 CSS 3D transform 实现立体旋转效果：
+
+- `perspective: 1200px` - 设置透视距离
+- `transform-style: preserve-3d` - 保持3D空间
+- `backface-visibility: hidden` - 隐藏背面
+
+### 自动旋转动画
+
+- 默认自动旋转，速度为 0.2度/帧
+- 鼠标悬停时暂停旋转
+- 鼠标离开后恢复旋转
+- 使用 requestAnimationFrame 实现流畅动画
+
+### 拖拽控制
+
+- 支持鼠标拖拽调整旋转角度
+- 拖拽偏移量转换为旋转角度（偏移量 \* 0.2）
+- 拖拽结束后恢复自动旋转
+
+### 菜单项布局
+
+- 菜单项均匀分布在360度圆周上
+- 每个菜单项的角度间隔为 `360 / menus.length`
+- 菜单项使用 `translateZ(200px)` 向外延伸，形成立体效果
+
+## 注意事项 ⚠️
+
+1. **固定定位** 📦：
+    - 组件使用 `position: fixed` 定位，位于页面顶部
+    - 需要确保父容器有足够的高度和空间
+    - 组件的 `z-index` 为 1000，可能影响其他元素的层级
+
+2. **菜单数量** 📋：
+    - 建议菜单数量在 3-8 个之间，过多会影响视觉效果
+    - 菜单项会自动均匀分布，无需手动调整角度
+
+3. **图标要求** 🎨：
+    - icon 可以是 React.ReactNode，支持文本、SVG、图片等
+    - 建议图标大小为 24px，保持视觉一致性
+
+4. **浏览器兼容性** 📱：
+    - 需要浏览器支持 CSS 3D transform
+    - 在不支持 3D transform 的浏览器中，可能显示为平面效果
+
+5. **性能优化** ⚡：
+    - 使用 requestAnimationFrame 实现动画，性能更好
+    - 鼠标悬停时暂停动画，减少不必要的渲染
+
+## 最佳实践 💡
+
+1. **菜单设计**：
+    - 使用简洁明了的图标和标题
+    - 保持菜单项数量适中（3-8个）
+    - 为每个菜单项提供清晰的 id 标识
+
+2. **交互反馈**：
+    - 在 `onMenuClick` 回调中提供明确的反馈
+    - 可以结合路由跳转或页面滚动
+
+3. **样式定制**：
+    - 可以通过修改 Less 样式文件定制外观
+    - 调整颜色、阴影、圆角等视觉效果
+
+4. **响应式考虑**：
+    - 在移动设备上可能需要调整菜单大小
+    - 考虑在小屏幕上使用替代方案

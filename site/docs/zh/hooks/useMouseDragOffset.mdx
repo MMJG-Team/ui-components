@@ -1,0 +1,198 @@
+# useMouseDragOffset 鼠标拖拽偏移
+
+## 概述
+
+`useMouseDragOffset` 是一个 React 自定义钩子，用于捕获鼠标拖拽时的偏移量。它通过监听鼠标的按下、移动和抬起事件，实时计算鼠标移动的偏移量，适用于需要实现拖拽功能的场景。
+
+## 导入
+
+```tsx
+import { useMouseDragOffset } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useState, useEffect } from "react";
+import { useMouseDragOffset } from "@mmjg/ui-components";
+
+const DragDemo: React.FC = () => {
+    const { xOffset, yOffset, onMouseDown } = useMouseDragOffset();
+
+    const [position, setPosition] = useState({
+        x: 0,
+        y: 0,
+    });
+
+    useEffect(() => {
+        setPosition((cur) => ({
+            x: cur.x + xOffset,
+            y: cur.y + yOffset,
+        }));
+    }, [xOffset, yOffset]);
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>X: {position.x}px</p>
+                <p style={{ margin: "5px 0" }}>Y: {position.y}px</p>
+            </div>
+
+            <div
+                onMouseDown={onMouseDown as any}
+                style={{
+                    width: "200px",
+                    height: "200px",
+                    background: "var(--rp-c-brand)",
+                    borderRadius: "8px",
+                    cursor: "move",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--rp-c-bg)",
+                    fontSize: "16px",
+                    fontWeight: "bold",
+                    userSelect: "none",
+                    transform: `translate(${position.x}px, ${position.y}px)`,
+                }}
+            >
+                拖拽我
+            </div>
+        </div>
+    );
+};
+
+export default DragDemo;
+```
+
+### 图片查看器
+
+```tsx preview
+import React, { useState, useEffect } from "react";
+import { useMouseDragOffset } from "@mmjg/ui-components";
+
+const ImageViewerDemo: React.FC = () => {
+    const { xOffset, yOffset, onMouseDown } = useMouseDragOffset();
+
+    const [position, setPosition] = useState({
+        x: 0,
+        y: 0,
+    });
+
+    useEffect(() => {
+        setPosition((cur) => ({
+            x: cur.x + xOffset,
+            y: cur.y + yOffset,
+        }));
+    }, [xOffset, yOffset]);
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>
+                    图片位置偏移: ({position.x}px, {position.y}px)
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                    拖拽图片查看不同区域
+                </p>
+            </div>
+
+            <div
+                style={{
+                    width: "100%",
+                    height: "300px",
+                    overflow: "hidden",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "8px",
+                    position: "relative",
+                    background: "var(--rp-c-bg)",
+                }}
+            >
+                <div
+                    onMouseDown={onMouseDown as any}
+                    style={{
+                        width: "800px",
+                        height: "600px",
+                        background:
+                            "linear-gradient(135deg, var(--rp-c-brand) 0%, var(--rp-c-brand-light) 100%)",
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
+                        cursor: "move",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "var(--rp-c-bg)",
+                        fontSize: "24px",
+                        fontWeight: "bold",
+                        userSelect: "none",
+                    }}
+                >
+                    大尺寸图片
+                    <br />
+                    (800x600)
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ImageViewerDemo;
+```
+
+## API
+
+### useMouseDragOffset()
+
+返回一个对象，包含以下属性和方法：
+
+| 属性/方法     | 类型       | 描述                                     |
+| ------------- | ---------- | ---------------------------------------- |
+| `xOffset`     | `number`   | X轴方向的偏移量（像素）                  |
+| `yOffset`     | `number`   | Y轴方向的偏移量（像素）                  |
+| `onMouseDown` | `function` | 需要绑定到目标元素的鼠标按下事件处理函数 |
+
+## 工作原理
+
+1. **鼠标按下**：记录鼠标初始位置，并添加 `mousemove` 和 `mouseup` 事件监听
+2. **鼠标移动**：计算当前位置与初始位置的偏移量，并更新状态
+3. **鼠标抬起**：清空偏移量，移除事件监听器
+
+## 使用场景
+
+1. **拖拽交互**：实现元素的拖拽移动功能
+2. **图片查看器**：拖拽查看大图片的不同区域
+3. **画布编辑**：拖拽调整元素位置
+4. **自定义布局**：实现可拖拽的自定义布局系统
+
+## 注意事项
+
+1. **事件绑定**：需要将 `onMouseDown` 绑定到目标元素上才能触发拖拽
+2. **偏移量清空**：鼠标抬起时，偏移量会自动清空为 0
+3. **性能优化**：内部使用 `useEvent` 保持函数引用稳定，避免不必要的重新渲染
+4. **事件清理**：鼠标抬起时会自动移除事件监听器，避免内存泄漏
+
+## 最佳实践
+
+1. **结合位置状态**：可以结合 `useState` 来保存累计位置，实现持久化的拖拽效果
+2. **边界限制**：根据容器尺寸限制拖拽范围，避免元素超出可视区域
+3. **视觉反馈**：在拖拽时改变元素的样式（如阴影、缩放），提供视觉反馈

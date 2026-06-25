@@ -1,0 +1,229 @@
+# useScrollPercent 滚动百分比
+
+## 概述
+
+`useScrollPercent` 是一个 React 自定义钩子，用于监听滚动事件并计算滚动百分比。它实时追踪滚动容器的滚动进度，并提供滚动到指定位置的方法，适用于需要实现滚动进度指示器、快速导航等场景。
+
+## 导入
+
+```tsx
+import { useScrollPercent } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useRef } from "react";
+import { useScrollPercent } from "@mmjg/ui-components";
+
+const ScrollPercentDemo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollPercent, scrollTo } = useScrollPercent(
+        () => containerRef.current!,
+    );
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>滚动进度: {scrollPercent}%</p>
+                <div style={{ display: "flex", gap: "10px" }}>
+                    <button
+                        onClick={() => scrollTo(0)}
+                        style={{
+                            padding: "4px 12px",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        顶部
+                    </button>
+                    <button
+                        onClick={() => scrollTo(100)}
+                        style={{
+                            padding: "4px 12px",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                        }}
+                    >
+                        底部
+                    </button>
+                </div>
+            </div>
+
+            <div
+                ref={containerRef}
+                style={{
+                    height: "200px",
+                    overflow: "auto",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "4px",
+                    padding: "10px",
+                    background: "var(--rp-c-bg)",
+                }}
+            >
+                {Array.from({ length: 20 }, (_, i) => (
+                    <div
+                        key={i}
+                        style={{
+                            padding: "10px",
+                            margin: "5px 0",
+                            background: "var(--rp-c-bg-soft)",
+                            borderRadius: "4px",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        内容段落 {i + 1}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default ScrollPercentDemo;
+```
+
+### 滚动进度指示器
+
+```tsx preview
+import React, { useRef } from "react";
+import { useScrollPercent } from "@mmjg/ui-components";
+
+const ProgressIndicatorDemo: React.FC = () => {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { scrollPercent } = useScrollPercent(() => containerRef.current!);
+
+    return (
+        <div>
+            <div
+                style={{
+                    position: "sticky",
+                    top: 0,
+                    background: "var(--rp-c-bg)",
+                    padding: "10px 0",
+                    marginBottom: "10px",
+                    zIndex: 10,
+                }}
+            >
+                <div
+                    style={{
+                        width: "100%",
+                        height: "4px",
+                        background: "var(--rp-c-bg-soft)",
+                        borderRadius: "2px",
+                        overflow: "hidden",
+                    }}
+                >
+                    <div
+                        style={{
+                            width: `${scrollPercent}%`,
+                            height: "100%",
+                            background: "var(--rp-c-brand)",
+                            transition: "width 0.1s ease",
+                        }}
+                    />
+                </div>
+                <p
+                    style={{
+                        textAlign: "center",
+                        margin: "5px 0",
+                        fontSize: "12px",
+                        color: "var(--rp-c-text-2)",
+                    }}
+                >
+                    已阅读 {scrollPercent}%
+                </p>
+            </div>
+
+            <div
+                ref={containerRef}
+                style={{
+                    height: "300px",
+                    overflow: "auto",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "4px",
+                    padding: "20px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <h3 style={{ color: "var(--rp-c-text-1)" }}>文章标题</h3>
+                {Array.from({ length: 10 }, (_, i) => (
+                    <p
+                        key={i}
+                        style={{ lineHeight: "1.8", marginBottom: "15px" }}
+                    >
+                        这是第 {i + 1}{" "}
+                        段内容。滚动查看更多内容，顶部的进度条会实时显示您的阅读进度。
+                        这个功能特别适用于长文章阅读、文档浏览等场景，帮助用户了解当前的阅读位置。
+                    </p>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+export default ProgressIndicatorDemo;
+```
+
+## API
+
+### useScrollPercent(scrollContainer)
+
+#### 参数
+
+| 参数              | 类型                               | 描述                         |
+| ----------------- | ---------------------------------- | ---------------------------- |
+| `scrollContainer` | `HTMLElement \| () => HTMLElement` | 滚动容器元素或返回元素的函数 |
+
+#### 返回值
+
+返回一个对象，包含以下属性和方法：
+
+| 属性/方法       | 类型       | 描述                       |
+| --------------- | ---------- | -------------------------- |
+| `scrollPercent` | `number`   | 当前滚动百分比（0-100）    |
+| `scrollTo`      | `function` | 滚动到指定百分比位置的方法 |
+
+### scrollTo 方法
+
+```typescript
+scrollTo(percent: number): void
+```
+
+| 参数      | 类型     | 描述                    |
+| --------- | -------- | ----------------------- |
+| `percent` | `number` | 目标滚动百分比（0-100） |
+
+## 工作原理
+
+1. **监听滚动**：添加滚动事件监听器，实时计算滚动百分比
+2. **百分比计算**：`scrollTop / (scrollHeight - clientHeight) * 100`
+3. **平滑滚动**：使用 `scrollTo` 方法的 `behavior: 'smooth'` 实现平滑滚动效果
+4. **自动清理**：组件卸载时自动移除事件监听器
+
+## 使用场景
+
+1. **阅读进度指示器**：显示用户在长文章中的阅读进度
+2. **快速导航**：提供快速跳转到不同章节的功能
+3. **滚动位置追踪**：记录和恢复用户的滚动位置
+4. **无限滚动优化**：结合滚动百分比触发加载更多内容
+5. **页面导航**：实现基于滚动位置的页面导航
+
+## 注意事项
+
+1. **容器要求**：滚动容器必须设置固定高度和 `overflow: auto` 或 `overflow: scroll`
+2. **初始值**：如果容器内容高度小于容器高度，滚动百分比为 0
+3. **平滑滚动**：`scrollTo` 方法使用平滑滚动，可能需要一定时间才能到达目标位置
+4. **事件清理**：组件卸载时会自动移除事件监听器，避免内存泄漏
+5. **容器引用**：可以传入容器元素或返回容器元素的函数，后者适用于容器动态变化的场景

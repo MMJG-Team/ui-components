@@ -12,7 +12,7 @@ export function useEvent<T extends (...args: any[]) => any>(callback: T) {
 
     return useCallback((...args: Parameters<T>): ReturnType<T> => {
         return callbackRef.current(...args);
-    }, [callback]);
+    }, []);
 }
 
 export default useEvent
