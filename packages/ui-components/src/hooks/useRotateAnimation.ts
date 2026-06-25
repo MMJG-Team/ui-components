@@ -158,5 +158,5 @@ export default function useRotateAnimation(
         return () => cancelRotateAnimation()
     }, [rotateStatus])
  
-    return { rotateStyle, setRotateStatus, rotateController };
+    return { rotateStyle, rotateRuntime, setRotateStatus, rotateController };
 }

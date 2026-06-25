@@ -18,6 +18,9 @@ type Menu = {
 
 export type Menu3DProps = {
     menus: Menu[];
+    menuClassName?: string;
+    rotateRadius?: number;
+    backfaceVisibility?: boolean;
     customItemRender?: (menu: Menu) => React.ReactNode;
     onMenuClick?: (menu: string) => void;
 };
@@ -28,12 +31,19 @@ export type Menu3DProps = {
  * @returns
  */
 export function Menu3D(props: Menu3DProps) {
-    const { menus, customItemRender, onMenuClick = () => {} } = props;
+    const {
+        menus,
+        menuClassName,
+        rotateRadius = 200,
+        backfaceVisibility = true,
+        customItemRender,
+        onMenuClick = () => {},
+    } = props;
     const itemRotateDeg = 360 / menus.length;
 
     const { mounted } = useMounted();
     const { xOffset, yOffset, onMouseDown } = useMouseDragOffset();
-    const { rotateStyle, setRotateStatus, rotateController } =
+    const { rotateStyle, rotateRuntime, setRotateStatus, rotateController } =
         useRotateAnimation();
 
     const onMouseEnter = useEvent(() => setRotateStatus(RotateStatus.paused));
@@ -62,12 +72,29 @@ export function Menu3D(props: Menu3DProps) {
                 }}
             >
                 {menus.map(({ id, title, icon }, index) => {
+                    const currentItemRotate = itemRotateDeg * index;
+
+                    const opacity =
+                        Math.abs(
+                            180 -
+                                ((currentItemRotate +
+                                    rotateRuntime.current.rotateY) %
+                                    360),
+                        ) / 180;
+
                     return (
                         <div
                             key={id}
-                            className={styles["component-menu3d-menu"]}
+                            className={classNames([
+                                styles["component-menu3d-menu"],
+                                menuClassName,
+                            ])}
                             style={{
-                                transform: `rotateY(${itemRotateDeg * index}deg) translateZ(200px)`,
+                                opacity,
+                                transform: `rotateY(${currentItemRotate}deg) translateZ(${rotateRadius}px)`,
+                                backfaceVisibility: backfaceVisibility
+                                    ? "visible"
+                                    : "hidden",
                             }}
                             onClick={() => onMenuClick(id)}
                         >
