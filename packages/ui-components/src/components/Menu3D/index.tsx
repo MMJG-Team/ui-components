@@ -2,7 +2,7 @@ import React, { useEffect, type MouseEventHandler } from "react";
 import useRotateAnimation, {
     RotateDirection,
     RotateStatus,
-} from "../../hooks/useRotateAnimation";
+} from "./hooks/useRotateAnimation";
 import useMouseDragOffset from "../../hooks/useMouseDragOffset";
 import useEvent from "../../hooks/useEvent";
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import useEvent from "./useEvent";
+import useEvent from "../../../hooks/useEvent";
 
 /**
  * 旋转状态
