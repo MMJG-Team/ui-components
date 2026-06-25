@@ -175,21 +175,225 @@ const CustomDemo: React.FC = () => {
 export default CustomDemo;
 ```
 
+### 自定义旋转半径 🎯
+
+通过 `rotateRadius` 属性调整菜单项距离中心的距离，实现不同的视觉效果。
+
+```tsx preview
+import React, { useState } from "react";
+import { Menu3D } from "@mmjg/ui-components";
+
+const RadiusDemo: React.FC = () => {
+    const menus = [
+        {
+            id: "home",
+            type: "link",
+            title: "首页",
+            icon: <span style={{ fontSize: "24px" }}>🏠</span>,
+        },
+        {
+            id: "projects",
+            type: "link",
+            title: "项目",
+            icon: <span style={{ fontSize: "24px" }}>📁</span>,
+        },
+        {
+            id: "docs",
+            type: "link",
+            title: "文档",
+            icon: <span style={{ fontSize: "24px" }}>📚</span>,
+        },
+        {
+            id: "blog",
+            type: "link",
+            title: "博客",
+            icon: <span style={{ fontSize: "24px" }}>📝</span>,
+        },
+        {
+            id: "about",
+            type: "link",
+            title: "关于",
+            icon: <span style={{ fontSize: "24px" }}>👤</span>,
+        },
+        {
+            id: "officialWebsite",
+            type: "link",
+            title: "官网",
+            icon: <span style={{ fontSize: "24px" }}>🌐</span>,
+        },
+        {
+            id: "contact",
+            type: "link",
+            title: "联系我们",
+            icon: <span style={{ fontSize: "24px" }}>📞</span>,
+        },
+    ];
+
+    const [rotateRadius, setRotateRadius] = useState(200);
+
+    const handleMenuClick = (menuId: string) => {
+        console.log("点击菜单:", menuId);
+        alert(`点击了菜单: ${menuId}`);
+    };
+
+    return (
+        <>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "12px",
+                }}
+            >
+                旋转半径:
+                <input
+                    type="number"
+                    min={100}
+                    max={500}
+                    style={{
+                        width: "100px",
+                        padding: "5px",
+                        borderRadius: "4px",
+                        margin: "0 5px",
+                    }}
+                    value={rotateRadius}
+                    onChange={(e) => setRotateRadius(Number(e.target.value))}
+                />
+                px
+            </div>
+            <div
+                style={{
+                    height: "400px",
+                    position: "relative",
+                    transform: "translateZ(0)",
+                }}
+            >
+                <Menu3D
+                    menus={menus}
+                    rotateRadius={rotateRadius}
+                    onMenuClick={handleMenuClick}
+                />
+            </div>
+        </>
+    );
+};
+
+export default RadiusDemo;
+```
+
+### 隐藏背面效果 🎭
+
+通过 `backfaceVisibility` 属性控制是否显示菜单项的背面，实现不同的视觉效果。
+
+```tsx preview
+import React from "react";
+import { Menu3D } from "@mmjg/ui-components";
+
+const BackfaceDemo: React.FC = () => {
+    const menus = [
+        {
+            id: "home",
+            type: "link",
+            title: "首页",
+            icon: <span style={{ fontSize: "24px" }}>🏠</span>,
+        },
+        {
+            id: "projects",
+            type: "link",
+            title: "项目",
+            icon: <span style={{ fontSize: "24px" }}>📁</span>,
+        },
+        {
+            id: "docs",
+            type: "link",
+            title: "文档",
+            icon: <span style={{ fontSize: "24px" }}>📚</span>,
+        },
+        {
+            id: "blog",
+            type: "link",
+            title: "博客",
+            icon: <span style={{ fontSize: "24px" }}>📝</span>,
+        },
+        {
+            id: "about",
+            type: "link",
+            title: "关于",
+            icon: <span style={{ fontSize: "24px" }}>👤</span>,
+        },
+        {
+            id: "officialWebsite",
+            type: "link",
+            title: "官网",
+            icon: <span style={{ fontSize: "24px" }}>🌐</span>,
+        },
+        {
+            id: "contact",
+            type: "link",
+            title: "联系我们",
+            icon: <span style={{ fontSize: "24px" }}>📞</span>,
+        },
+    ];
+
+    const handleMenuClick = (menuId: string) => {
+        console.log("点击菜单:", menuId);
+        alert(`点击了菜单: ${menuId}`);
+    };
+
+    return (
+        <div
+            style={{
+                height: "400px",
+                position: "relative",
+                transform: "translateZ(0)",
+            }}
+        >
+            <Menu3D
+                menus={menus}
+                backfaceVisibility={false}
+                onMenuClick={handleMenuClick}
+            />
+            <div
+                style={{
+                    position: "absolute",
+                    bottom: "20px",
+                    left: "20px",
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "12px",
+                }}
+            >
+                背面隐藏：只显示面向用户的菜单项
+            </div>
+        </div>
+    );
+};
+
+export default BackfaceDemo;
+```
+
 ## API 📚
 
 ### Menu3DProps ⚙️
 
-| 属性        | 说明             | 类型                       | 默认值 | 版本 |
-| ----------- | ---------------- | -------------------------- | ------ | ---- |
-| menus       | 菜单数据数组     | `Menu[]`                   | -      | -    |
-| onMenuClick | 菜单点击回调函数 | `(menuId: string) => void` | -      | -    |
+| 属性               | 说明                 | 类型                              | 默认值 | 版本 |
+| ------------------ | -------------------- | --------------------------------- | ------ | ---- |
+| menus              | 菜单数据数组         | `Menu[]`                          | -      | -    |
+| menuClassName      | 菜单项的自定义类名   | `string`                          | -      | -    |
+| rotateRadius       | 旋转半径（像素）     | `number`                          | 200    | -    |
+| backfaceVisibility | 是否显示菜单项背面   | `boolean`                         | true   | -    |
+| customItemRender   | 自定义菜单项渲染函数 | `(menu: Menu) => React.ReactNode` | -      | -    |
+| onMenuClick        | 菜单点击回调函数     | `(menuId: string) => void`        | -      | -    |
 
 ### Menu 类型定义 🔖
 
 ```typescript
 type Menu = {
     id: string;
-    type: string;
     title: string;
     icon: React.ReactNode;
 };
@@ -222,36 +426,35 @@ type Menu = {
 
 - 菜单项均匀分布在360度圆周上
 - 每个菜单项的角度间隔为 `360 / menus.length`
-- 菜单项使用 `translateZ(200px)` 向外延伸，形成立体效果
+- 菜单项使用 `translateZ(rotateRadius)` 向外延伸，形成立体效果
 
-## 注意事项 ⚠️
+### 动态透明度效果
 
-1. **固定定位** 📦：
-    - 组件使用 `position: fixed` 定位，位于页面顶部
-    - 需要确保父容器有足够的高度和空间
-    - 组件的 `z-index` 为 1000，可能影响其他元素的层级
+- 菜单项根据旋转角度自动调整透明度
+- 透明度计算公式：`opacity = |180 - (当前角度 % 360)| / 180`
+- 面向用户的菜单项（角度接近0或360）透明度接近1，清晰可见
+- 背向用户的菜单项（角度接近180）透明度接近0，逐渐模糊
+- 提供更自然的3D视觉效果和深度感
 
-2. **菜单数量** 📋：
-    - 建议菜单数量在 3-8 个之间，过多会影响视觉效果
-    - 菜单项会自动均匀分布，无需手动调整角度
+### 自定义旋转半径
 
-3. **图标要求** 🎨：
-    - icon 可以是 React.ReactNode，支持文本、SVG、图片等
-    - 建议图标大小为 24px，保持视觉一致性
+- 通过 `rotateRadius` 属性调整菜单项距离中心的距离
+- 默认值为 200px，可以根据需要调整
+- 较小的半径使菜单项更靠近中心，适合紧凑布局
+- 较大的半径使菜单项更分散，适合展示更多内容
 
-4. **浏览器兼容性** 📱：
-    - 需要浏览器支持 CSS 3D transform
-    - 在不支持 3D transform 的浏览器中，可能显示为平面效果
+### 背面显示控制
 
-5. **性能优化** ⚡：
-    - 使用 requestAnimationFrame 实现动画，性能更好
-    - 鼠标悬停时暂停动画，减少不必要的渲染
+- 通过 `backfaceVisibility` 属性控制是否显示菜单项背面
+- 默认值为 true，显示背面（使用 `backface-visibility: visible`）
+- 设置为 false 时隐藏背面（使用 `backface-visibility: hidden`）
+- 隐藏背面可以避免菜单项翻转时的视觉干扰
 
 ## 最佳实践 💡
 
 1. **菜单设计**：
     - 使用简洁明了的图标和标题
-    - 保持菜单项数量适中（3-8个）
+    - 保持菜单项数量适中（5-10个）
     - 为每个菜单项提供清晰的 id 标识
 
 2. **交互反馈**：
@@ -265,3 +468,17 @@ type Menu = {
 4. **响应式考虑**：
     - 在移动设备上可能需要调整菜单大小
     - 考虑在小屏幕上使用替代方案
+
+5. **旋转半径选择**：
+    - 根据菜单项数量选择合适的半径
+    - 测试不同半径值，找到最佳视觉效果
+
+6. **自定义渲染**：
+    - 使用 `customItemRender` 实现完全自定义的菜单项样式
+    - 可以添加动画效果、交互元素等
+    - 保持自定义样式与整体设计风格一致
+
+7. **透明度优化**：
+    - 利用动态透明度效果增强用户体验
+    - 面向用户的菜单项更突出，便于点击
+    - 背向的菜单项淡化，减少视觉干扰
