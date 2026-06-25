@@ -1,0 +1,340 @@
+# AsyncUtil 异步工具函数
+
+## 概述
+
+`AsyncUtil` 提供了一组实用的异步工具函数，用于处理异步操作和流式数据。它包含延迟执行函数和模拟异步流式分片函数，适用于需要精确控制异步流程的场景。
+
+## 使用示例
+
+### delay 延迟执行
+
+```tsx preview
+import React, { useState } from "react";
+import { AsyncUtil } from "@mmjg/ui-components";
+
+const DelayDemo: React.FC = () => {
+    const [status, setStatus] = useState("等待");
+    const [progress, setProgress] = useState(0);
+    const [cancelToken, setCancelToken] = useState<any>(null);
+
+    const startDelay = async () => {
+        setStatus("等待中");
+        setProgress(0);
+
+        try {
+            // 创建延迟任务
+            const delayTask = AsyncUtil.delay(3000);
+            setCancelToken(delayTask);
+
+            await delayTask.promise;
+
+            setProgress(100);
+
+            setStatus("完成");
+        } catch (error) {
+            setStatus("已取消");
+            setProgress(0);
+        }
+    };
+
+    const cancelDelay = () => {
+        if (cancelToken) {
+            cancelToken.cancel();
+            setCancelToken(null);
+        }
+    };
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>状态: {status}</p>
+                <p style={{ margin: "5px 0" }}>进度: {progress}%</p>
+            </div>
+
+            <div
+                style={{
+                    width: "100%",
+                    height: "8px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    overflow: "hidden",
+                }}
+            >
+                <div
+                    style={{
+                        width: `${progress}%`,
+                        height: "100%",
+                        background: "var(--rp-c-brand)",
+                        transition: "width 0.3s ease",
+                    }}
+                />
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                    onClick={startDelay}
+                    disabled={status === "执行中"}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        background: "var(--rp-c-brand)",
+                        color: "var(--rp-c-bg)",
+                        opacity: status === "执行中" ? 0.6 : 1,
+                    }}
+                >
+                    开始延迟 (3秒)
+                </button>
+                <button
+                    onClick={cancelDelay}
+                    disabled={status !== "执行中"}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        background: "var(--rp-c-bg-soft)",
+                        color: "var(--rp-c-text-1)",
+                        opacity: status !== "执行中" ? 0.6 : 1,
+                    }}
+                >
+                    取消
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default DelayDemo;
+```
+
+### mockAsyncChunk 数据分片渲染
+
+```tsx preview
+import React, { useState, useRef } from "react";
+import { AsyncUtil } from "@mmjg/ui-components";
+
+const CustomChunkDemo: React.FC = () => {
+    const [displayText, setDisplayText] = useState("");
+    const [isStreaming, setIsStreaming] = useState(false);
+    const [chunkSize, setChunkSize] = useState(1);
+    const [delayMs, setDelayMs] = useState(100);
+    const cancelRef = useRef<any>(null);
+
+    const startStream = () => {
+        setDisplayText("");
+        setIsStreaming(true);
+
+        const content =
+            "这段文字会按照自定义的分片大小和延迟时间进行传输。你可以调整分片大小和延迟时间来体验不同的传输效果。";
+
+        cancelRef.current = AsyncUtil.mockAsyncChunk(content, {
+            chunkSize: chunkSize,
+            delayMs: delayMs,
+            onChunk: (current, chunk) => {
+                setDisplayText(current);
+            },
+            onComplete: () => {
+                setIsStreaming(false);
+            },
+        });
+    };
+
+    const cancelStream = () => {
+        if (cancelRef.current) {
+            cancelRef.current();
+            cancelRef.current = null;
+            setIsStreaming(false);
+        }
+    };
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <div style={{ marginBottom: "10px" }}>
+                    <label style={{ marginRight: "10px" }}>分片大小:</label>
+                    <input
+                        type="number"
+                        value={chunkSize}
+                        onChange={(e) => setChunkSize(Number(e.target.value))}
+                        min="1"
+                        max="20"
+                        style={{
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            border: "1px solid var(--rp-c-border)",
+                            background: "var(--rp-c-bg)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    />
+                </div>
+                <div>
+                    <label style={{ marginRight: "10px" }}>
+                        渲染间隔时间 (ms):
+                    </label>
+                    <input
+                        type="number"
+                        value={delayMs}
+                        onChange={(e) => setDelayMs(Number(e.target.value))}
+                        min="10"
+                        max="500"
+                        style={{
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            border: "1px solid var(--rp-c-border)",
+                            background: "var(--rp-c-bg)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    />
+                </div>
+            </div>
+
+            <div
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg)",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "8px",
+                    minHeight: "100px",
+                    color: "var(--rp-c-text-1)",
+                    fontFamily: "monospace",
+                    lineHeight: "1.6",
+                }}
+            >
+                {displayText || "调整参数后点击开始"}
+                {isStreaming && (
+                    <span style={{ color: "var(--rp-c-brand)" }}>|</span>
+                )}
+            </div>
+
+            <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+                <button
+                    onClick={startStream}
+                    disabled={isStreaming}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        background: "var(--rp-c-brand)",
+                        color: "var(--rp-c-bg)",
+                        opacity: isStreaming ? 0.6 : 1,
+                        cursor: isStreaming ? "not-allowed" : "pointer",
+                    }}
+                >
+                    开始渲染
+                </button>
+                <button
+                    onClick={cancelStream}
+                    disabled={!isStreaming}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        background: "var(--rp-c-bg-soft)",
+                        color: "var(--rp-c-text-1)",
+                        opacity: !isStreaming ? 0.6 : 1,
+                    }}
+                >
+                    取消
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default CustomChunkDemo;
+```
+
+## API
+
+### delay(ms)
+
+延迟执行函数，返回一个可取消的 Promise。
+
+#### 参数
+
+| 参数 | 类型     | 描述             |
+| ---- | -------- | ---------------- |
+| `ms` | `number` | 延迟时间（毫秒） |
+
+#### 返回值
+
+返回一个对象，包含以下属性：
+
+| 属性      | 类型            | 描述               |
+| --------- | --------------- | ------------------ |
+| `promise` | `Promise<void>` | 延迟执行的 Promise |
+| `cancel`  | `() => void`    | 取消延迟执行的函数 |
+
+### mockAsyncChunk(content, options)
+
+模拟异步流式分片传输。
+
+#### 参数
+
+| 参数                 | 类型       | 描述                      |
+| -------------------- | ---------- | ------------------------- |
+| `content`            | `string`   | 需要传输的内容            |
+| `options`            | `object`   | 配置选项                  |
+| `options.chunkSize`  | `number`   | 每次传输的字符数（默认1） |
+| `options.delayMs`    | `number`   | 每次传输的延迟（默认5ms） |
+| `options.onChunk`    | `function` | 每次传输的回调函数        |
+| `options.onComplete` | `function` | 传输完成的回调函数        |
+
+#### 返回值
+
+返回一个取消函数，调用后可以停止传输。
+
+```typescript
+() => void
+```
+
+#### 回调函数类型
+
+```typescript
+onChunk: (current: string, chunk: string) => void
+onComplete?: (final: string) => void
+```
+
+| 参数      | 类型     | 描述                 |
+| --------- | -------- | -------------------- |
+| `current` | `string` | 当前已传输的完整内容 |
+| `chunk`   | `string` | 本次传输的片段       |
+| `final`   | `string` | 传输完成后的完整内容 |
+
+## 工作原理
+
+### delay 函数
+
+1. **Promise 创建**：创建一个 Promise，在指定时间后 resolve
+2. **定时器管理**：使用 setTimeout 实现延迟
+3. **取消机制**：提供 cancel 函数，可以提前取消延迟
+4. **清理工作**：取消时清除定时器并 reject Promise
+
+### mockAsyncChunk 函数
+
+1. **分片传输**：将内容按指定大小分片
+2. **异步循环**：使用 async/await 循环传输每个分片
+3. **延迟控制**：每次传输后延迟指定时间
+4. **回调通知**：每次传输和完成时调用回调函数
+5. **取消支持**：提供取消函数，可以随时停止传输
+
+## 使用场景
+
+1. **延迟执行**：需要在指定时间后执行操作，并支持取消
+2. **流式数据模拟**：模拟服务端流式返回数据的效果
+3. **打字机效果**：实现逐字符或逐词显示的打字机效果
+4. **动画序列**：按时间顺序执行动画效果
+5. **测试和演示**：在测试或演示中模拟异步行为

@@ -1,0 +1,294 @@
+# useEvent 事件处理函数优化
+
+## 概述
+
+`useEvent` 是一个 React 自定义钩子，用于优化事件处理函数的引用稳定性。它通过 `useRef` 和 `useCallback` 的组合，确保事件处理函数的引用在组件生命周期内保持不变，避免因函数重新创建导致的不必要渲染和依赖更新问题。
+
+## 导入
+
+```tsx
+import { useEvent } from "@mmjg/ui-components";
+```
+
+## 使用示例
+
+### 基本使用
+
+```tsx preview
+import React, { useState, useEffect } from "react";
+import { useEvent } from "@mmjg/ui-components";
+
+const EventDemo: React.FC = () => {
+    const [count, setCount] = useState(0);
+    const [effectCount, setEffectCount] = useState(0);
+
+    // 使用 useEvent 保持函数引用稳定
+    const handleClick = useEvent(() => {
+        setCount((prev) => prev + 1);
+    });
+
+    // 每次 handleClick 变化时，effect 会重新执行
+    // 使用 useEvent 后，handleClick 引用不变，effect 只执行一次
+    useEffect(() => {
+        setEffectCount((prev) => prev + 1);
+        console.log("Effect 执行次数:", effectCount + 1);
+    }, [handleClick]);
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>点击次数: {count}</p>
+                <p style={{ margin: "5px 0" }}>
+                    Effect 执行次数: {effectCount}
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                    使用 useEvent 后，Effect 只执行一次（初始化时）
+                </p>
+            </div>
+
+            <button
+                onClick={handleClick}
+                style={{
+                    padding: "8px 16px",
+                    borderRadius: "4px",
+                    background: "var(--rp-c-brand)",
+                    color: "var(--rp-c-bg)",
+                }}
+            >
+                点击计数
+            </button>
+        </div>
+    );
+};
+
+export default EventDemo;
+```
+
+### 与 useCallback 的对比
+
+```tsx preview
+import React, { useState, useCallback, useEffect } from "react";
+import { useEvent } from "@mmjg/ui-components";
+
+const ComparisonDemo: React.FC = () => {
+    const [count, setCount] = useState(0);
+    const [useCallbackEffectCount, setUseCallbackEffectCount] = useState(0);
+    const [useEventEffectCount, setUseEventEffectCount] = useState(0);
+
+    // 使用 useCallback - 每次依赖变化时重新创建
+    const handleCallbackClick = useCallback(() => {
+        setCount((prev) => prev + 1);
+    }, [count]); // 依赖 count，每次 count 变化时重新创建
+
+    // 使用 useEvent - 引用始终稳定
+    const handleEventClick = useEvent(() => {
+        setCount((prev) => prev + 1);
+    });
+
+    useEffect(() => {
+        setUseCallbackEffectCount((prev) => prev + 1);
+    }, [handleCallbackClick]);
+
+    useEffect(() => {
+        setUseEventEffectCount((prev) => prev + 1);
+    }, [handleEventClick]);
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>计数: {count}</p>
+                <p style={{ margin: "5px 0" }}>
+                    useCallback Effect 执行: {useCallbackEffectCount} 次
+                </p>
+                <p style={{ margin: "5px 0" }}>
+                    useEvent Effect 执行: {useEventEffectCount} 次
+                </p>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                    onClick={handleCallbackClick}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        background: "var(--rp-c-brand-light)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    useCallback
+                </button>
+                <button
+                    onClick={handleEventClick}
+                    style={{
+                        padding: "8px 16px",
+                        borderRadius: "4px",
+                        background: "var(--rp-c-brand)",
+                        color: "var(--rp-c-bg)",
+                    }}
+                >
+                    useEvent
+                </button>
+            </div>
+
+            <p
+                style={{
+                    marginTop: "10px",
+                    fontSize: "12px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                useCallback 依赖 count，每次点击都会重新创建函数，导致 Effect
+                重新执行。 useEvent 引用稳定，Effect 只执行一次。
+            </p>
+        </div>
+    );
+};
+
+export default ComparisonDemo;
+```
+
+### 事件监听器优化
+
+```tsx preview
+import React, { useState, useEffect, useRef } from "react";
+import { useEvent } from "@mmjg/ui-components";
+
+const EventListenerDemo: React.FC = () => {
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [listenerCount, setListenerCount] = useState(0);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // 使用 useEvent 保持事件处理函数引用稳定
+    const handleMouseMove = useEvent((e: MouseEvent) => {
+        if (containerRef.current?.contains(e.target as Node)) {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+        }
+    });
+
+    useEffect(() => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        container.addEventListener("mousemove", handleMouseMove as any);
+        setListenerCount((prev) => prev + 1);
+
+        return () => {
+            container.removeEventListener("mousemove", handleMouseMove as any);
+        };
+    }, [handleMouseMove]); // handleMouseMove 引用不变，监听器只绑定一次
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>
+                    鼠标位置: ({mousePosition.x}, {mousePosition.y})
+                </p>
+                <p style={{ margin: "5px 0" }}>
+                    监听器绑定次数: {listenerCount}
+                </p>
+            </div>
+
+            <div
+                ref={containerRef}
+                style={{
+                    width: "100%",
+                    height: "200px",
+                    background: "var(--rp-c-bg)",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                在此区域移动鼠标
+            </div>
+        </div>
+    );
+};
+
+export default EventListenerDemo;
+```
+
+## API
+
+### useEvent
+
+#### 参数
+
+| 参数       | 类型 | 描述                   |
+| ---------- | ---- | ---------------------- |
+| `callback` | `T`  | 需要优化的事件处理函数 |
+
+#### 返回值
+
+返回一个稳定的函数引用，类型与输入的 `callback` 相同。
+
+```typescript
+function useEvent<T extends (...args: any[]) => any>(callback: T): T;
+```
+
+## 工作原理
+
+1. **引用存储**：使用 `useRef` 存储最新的回调函数
+2. **引用更新**：每次渲染时，更新 `ref.current` 为最新的回调函数
+3. **稳定返回**：使用 `useCallback` 返回一个稳定的函数引用，该函数内部调用 `ref.current`
+4. **依赖数组**：`useCallback` 的依赖数组为空，确保返回的函数引用始终不变
+
+## 使用场景
+
+1. **事件监听器**：避免因事件处理函数变化导致频繁添加/移除监听器
+2. **子组件优化**：避免因父组件状态变化导致子组件不必要的重新渲染
+3. **Effect 优化**：避免因事件处理函数变化导致 Effect 重新执行
+4. **定时器管理**：保持定时器回调函数引用稳定，避免频繁创建/清除定时器
+5. **异步操作**：在异步操作中保持回调函数引用稳定
+
+## 与 useCallback 的区别
+
+| 特性       | useEvent           | useCallback          |
+| ---------- | ------------------ | -------------------- |
+| 引用稳定性 | 始终稳定           | 依赖变化时重新创建   |
+| 依赖管理   | 无需管理依赖       | 需要正确声明依赖     |
+| 性能优化   | 更优，避免重新创建 | 需要正确使用才能优化 |
+| 使用复杂度 | 简单，无需考虑依赖 | 需要仔细管理依赖数组 |
+| 适用场景   | 事件处理、回调函数 | 不推荐               |
+
+## 注意事项
+
+1. **不适用于计算**：useEvent 不适用于需要缓存计算结果的场景，应使用 useCallback 或 useMemo
+2. **函数类型**：返回的函数类型与输入函数类型相同，保持类型安全
+3. **最新调用**：每次调用时都会执行最新的回调函数，不会缓存旧函数
+4. **性能优势**：主要优势在于避免因函数引用变化导致的副作用重新执行
+5. **依赖数组**：返回的函数引用始终不变，可以安全地用于依赖数组中
+
+## 最佳实践
+
+1. **事件处理**：优先使用 useEvent 处理事件回调，避免依赖管理问题
+2. **子组件传递**：将事件处理函数传递给子组件时，使用 useEvent 保持引用稳定
+3. **监听器管理**：在添加/移除事件监听器时，使用 useEvent 避免频繁操作
+4. **Effect 依赖**：将 useEvent 返回的函数放入 Effect 依赖数组，避免不必要的重新执行
