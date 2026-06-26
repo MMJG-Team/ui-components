@@ -42,6 +42,9 @@
     "author": "MMJG-Team",
     "license": "ISC",
     "packageManager": "pnpm@10.12.1",
+    "publishConfig": {
+        "access": "public"
+    },
     "dependencies": {
         "classnames": "2.5.1",
         "lodash-es": "4.17.21",
