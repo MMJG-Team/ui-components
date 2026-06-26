@@ -4,11 +4,13 @@
 
 `useAutoLoadMore` 是一个 React 自定义钩子，用于自动触发加载更多功能。当滚动容器大小变化导致滚动条消失时，如果还有更多数据，会自动触发加载更多操作，解决用户无法通过滚动触发加载的问题。
 
-## 导入
+:::tip 导入
 
 ```tsx
 import { useAutoLoadMore } from "@mmjg/ui-components";
 ```
+
+:::
 
 ## 使用示例
 
@@ -89,36 +91,43 @@ const AutoLoadMoreDemo: React.FC = () => {
                 {ctx.current.hasMore ? "还有更多" : "已全部加载"}
             </p>
             <div
-                ref={containerRef}
                 style={{
-                    height: "200px",
-                    overflow: "auto",
-                    padding: "10px",
-                    minHeight: "200px",
-                    maxWidth: "100%",
-                    resize: "both",
-                    border: "1px dashed var(--rp-c-brand)",
                     borderRadius: "4px",
+                    border: "1px dashed var(--rp-c-brand)",
+                    marginTop: "10px",
                 }}
             >
-                {items.map((item, index) => (
-                    <div
-                        key={index}
-                        style={{
-                            padding: "10px",
-                            margin: "5px 0",
-                            borderRadius: "4px",
-                            border: "1px solid #ccc",
-                        }}
-                    >
-                        条目 {item}
-                    </div>
-                ))}
-                {loading && (
-                    <div style={{ padding: "10px", textAlign: "center" }}>
-                        加载中...
-                    </div>
-                )}
+                <div
+                    ref={containerRef}
+                    style={{
+                        height: "212px",
+                        overflow: "auto",
+                        margin: "10px 6px",
+                        padding: "0 12px",
+                        minHeight: "200px",
+                        maxWidth: "100%",
+                        resize: "both",
+                    }}
+                >
+                    {items.map((item, index) => (
+                        <div
+                            key={index}
+                            style={{
+                                padding: "4px 10px",
+                                margin: "5px 0",
+                                borderRadius: "4px",
+                                border: "1px solid #ccc",
+                            }}
+                        >
+                            条目 {item}
+                        </div>
+                    ))}
+                    {loading && (
+                        <div style={{ padding: "10px", textAlign: "center" }}>
+                            加载中...
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

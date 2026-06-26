@@ -4,11 +4,13 @@
 
 `useMouseDragOffset` 是一个 React 自定义钩子，用于捕获鼠标拖拽时的偏移量。它通过监听鼠标的按下、移动和抬起事件，实时计算鼠标移动的偏移量，适用于需要实现拖拽功能的场景。
 
-## 导入
+:::tip 导入
 
 ```tsx
 import { useMouseDragOffset } from "@mmjg/ui-components";
 ```
+
+:::
 
 ## 使用示例
 
@@ -59,7 +61,7 @@ const DragDemo: React.FC = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    color: "var(--rp-c-bg)",
+                    color: "#fff",
                     fontSize: "16px",
                     fontWeight: "bold",
                     userSelect: "none",
@@ -141,7 +143,7 @@ const ImageViewerDemo: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "var(--rp-c-bg)",
+                        color: "#fff",
                         fontSize: "24px",
                         fontWeight: "bold",
                         userSelect: "none",
@@ -171,11 +173,13 @@ export default ImageViewerDemo;
 | `yOffset`     | `number`   | Y轴方向的偏移量（像素）                  |
 | `onMouseDown` | `function` | 需要绑定到目标元素的鼠标按下事件处理函数 |
 
-## 工作原理
+:::tip 工作原理
 
 1. **鼠标按下**：记录鼠标初始位置，并添加 `mousemove` 和 `mouseup` 事件监听
 2. **鼠标移动**：计算当前位置与初始位置的偏移量，并更新状态
 3. **鼠标抬起**：清空偏移量，移除事件监听器
+
+:::
 
 ## 使用场景
 
@@ -184,15 +188,11 @@ export default ImageViewerDemo;
 3. **画布编辑**：拖拽调整元素位置
 4. **自定义布局**：实现可拖拽的自定义布局系统
 
-## 注意事项
+:::tip
 
-1. **事件绑定**：需要将 `onMouseDown` 绑定到目标元素上才能触发拖拽
-2. **偏移量清空**：鼠标抬起时，偏移量会自动清空为 0
-3. **性能优化**：内部使用 `useEvent` 保持函数引用稳定，避免不必要的重新渲染
-4. **事件清理**：鼠标抬起时会自动移除事件监听器，避免内存泄漏
+- **事件绑定**：需要将 `onMouseDown` 绑定到目标元素上才能触发拖拽
+- **偏移量清空**：鼠标抬起时，偏移量会自动清空为 0
+- **性能优化**：内部使用 `useEvent` 保持函数引用稳定，避免不必要的重新渲染
+- **事件清理**：鼠标抬起时会自动移除事件监听器，避免内存泄漏
 
-## 最佳实践
-
-1. **结合位置状态**：可以结合 `useState` 来保存累计位置，实现持久化的拖拽效果
-2. **边界限制**：根据容器尺寸限制拖拽范围，避免元素超出可视区域
-3. **视觉反馈**：在拖拽时改变元素的样式（如阴影、缩放），提供视觉反馈
+:::

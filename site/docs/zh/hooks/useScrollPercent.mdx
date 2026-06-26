@@ -4,11 +4,13 @@
 
 `useScrollPercent` 是一个 React 自定义钩子，用于监听滚动事件并计算滚动百分比。它实时追踪滚动容器的滚动进度，并提供滚动到指定位置的方法，适用于需要实现滚动进度指示器、快速导航等场景。
 
-## 导入
+:::tip 导入
 
 ```tsx
 import { useScrollPercent } from "@mmjg/ui-components";
 ```
+
+:::
 
 ## 使用示例
 
@@ -42,6 +44,8 @@ const ScrollPercentDemo: React.FC = () => {
                         style={{
                             padding: "4px 12px",
                             borderRadius: "4px",
+                            background: "var(--rp-c-brand)",
+                            color: "#fff",
                             cursor: "pointer",
                         }}
                     >
@@ -52,6 +56,8 @@ const ScrollPercentDemo: React.FC = () => {
                         style={{
                             padding: "4px 12px",
                             borderRadius: "4px",
+                            background: "var(--rp-c-brand)",
+                            color: "#fff",
                             cursor: "pointer",
                         }}
                     >
@@ -61,30 +67,36 @@ const ScrollPercentDemo: React.FC = () => {
             </div>
 
             <div
-                ref={containerRef}
                 style={{
-                    height: "200px",
-                    overflow: "auto",
-                    border: "1px solid var(--rp-c-border)",
+                    border: "1px dashed var(--rp-c-brand)",
                     borderRadius: "4px",
-                    padding: "10px",
+                    // padding: "10px",
                     background: "var(--rp-c-bg)",
                 }}
             >
-                {Array.from({ length: 20 }, (_, i) => (
-                    <div
-                        key={i}
-                        style={{
-                            padding: "10px",
-                            margin: "5px 0",
-                            background: "var(--rp-c-bg-soft)",
-                            borderRadius: "4px",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        内容段落 {i + 1}
-                    </div>
-                ))}
+                <div
+                    ref={containerRef}
+                    style={{
+                        margin: "10px",
+                        height: "200px",
+                        overflow: "auto",
+                    }}
+                >
+                    {Array.from({ length: 20 }, (_, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                padding: "10px",
+                                margin: "5px 0",
+                                background: "var(--rp-c-bg-soft)",
+                                borderRadius: "4px",
+                                color: "var(--rp-c-text-1)",
+                            }}
+                        >
+                            内容段落 {i + 1}
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
@@ -178,7 +190,7 @@ export default ProgressIndicatorDemo;
 
 ## API
 
-### useScrollPercent(scrollContainer)
+### useScrollPercent
 
 #### 参数
 
@@ -205,25 +217,27 @@ scrollTo(percent: number): void
 | --------- | -------- | ----------------------- |
 | `percent` | `number` | 目标滚动百分比（0-100） |
 
-## 工作原理
+:::tip 工作原理
 
 1. **监听滚动**：添加滚动事件监听器，实时计算滚动百分比
 2. **百分比计算**：`scrollTop / (scrollHeight - clientHeight) * 100`
 3. **平滑滚动**：使用 `scrollTo` 方法的 `behavior: 'smooth'` 实现平滑滚动效果
 4. **自动清理**：组件卸载时自动移除事件监听器
 
+:::
+
 ## 使用场景
 
 1. **阅读进度指示器**：显示用户在长文章中的阅读进度
-2. **快速导航**：提供快速跳转到不同章节的功能
-3. **滚动位置追踪**：记录和恢复用户的滚动位置
-4. **无限滚动优化**：结合滚动百分比触发加载更多内容
-5. **页面导航**：实现基于滚动位置的页面导航
+2. **滚动位置追踪**：记录和恢复用户的滚动位置
+3. **无限滚动优化**：结合滚动百分比触发加载更多内容
+4. **页面导航**：实现基于滚动位置的页面导航
 
-## 注意事项
+:::warning 注意事项
 
 1. **容器要求**：滚动容器必须设置固定高度和 `overflow: auto` 或 `overflow: scroll`
 2. **初始值**：如果容器内容高度小于容器高度，滚动百分比为 0
 3. **平滑滚动**：`scrollTo` 方法使用平滑滚动，可能需要一定时间才能到达目标位置
-4. **事件清理**：组件卸载时会自动移除事件监听器，避免内存泄漏
-5. **容器引用**：可以传入容器元素或返回容器元素的函数，后者适用于容器动态变化的场景
+4. **容器引用**：可以传入容器元素或返回容器元素的函数，后者适用于容器动态变化的场景
+
+:::

@@ -4,11 +4,13 @@
 
 `VerticalViewportMonitor` 是一个用于监控元素在垂直方向上进入或离开视口的工具类。它支持多个元素的批量监控，提供进入和离开视口的回调通知，并支持节流优化以提升性能。
 
-## 导入
+:::tip 导入
 
 ```tsx
 import { VerticalViewportMonitor } from "@mmjg/ui-components";
 ```
+
+:::
 
 ## 使用示例
 
@@ -51,23 +53,22 @@ const ViewportDemo: React.FC = () => {
             style={{
                 height: "300px",
                 overflow: "auto",
-                border: "1px solid #ccc",
                 padding: "10px",
             }}
         >
-            {Array.from({ length: 10 }).map((_, index) => (
+            {Array.from({ length: 20 }).map((_, index) => (
                 <div
                     key={index}
                     ref={(el) => {
                         if (el) elementRefs.current[index] = el;
                     }}
                     style={{
-                        height: "100px",
                         marginBottom: "10px",
                         padding: "20px",
                         backgroundColor: "#f0f0f0",
                         textAlign: "center",
                         transition: "all 0.3s ease",
+                        borderRadius: "6px",
                     }}
                     data-index={index}
                 >
@@ -140,6 +141,7 @@ const DynamicMonitorDemo: React.FC = () => {
         }
 
         setElements(elements.slice(0, -1));
+        setVisibleCount((prev) => Math.max(0, prev - 1));
     };
 
     return (
@@ -148,16 +150,23 @@ const DynamicMonitorDemo: React.FC = () => {
                 <button
                     onClick={addElement}
                     style={{
-                        padding: "8px 16px",
+                        padding: "4px 16px",
                         marginRight: "10px",
                         borderRadius: "4px",
+                        background: "var(--rp-c-brand)",
+                        color: "#fff",
+                        cursor: "pointer",
                     }}
                 >
                     添加元素
                 </button>
                 <button
                     onClick={removeElement}
-                    style={{ padding: "8px 16px", borderRadius: "4px" }}
+                    style={{
+                        padding: "4px 16px",
+                        borderRadius: "4px",
+                        cursor: "pointer",
+                    }}
                 >
                     移除元素
                 </button>
@@ -171,7 +180,6 @@ const DynamicMonitorDemo: React.FC = () => {
                 style={{
                     height: "250px",
                     overflow: "auto",
-                    border: "1px solid #ccc",
                     padding: "10px",
                 }}
             >
@@ -180,7 +188,6 @@ const DynamicMonitorDemo: React.FC = () => {
                         key={id}
                         id={`item-${id}`}
                         style={{
-                            height: "80px",
                             marginBottom: "10px",
                             padding: "15px",
                             backgroundColor: "#e0e0e0",

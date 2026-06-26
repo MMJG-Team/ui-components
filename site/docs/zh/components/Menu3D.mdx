@@ -2,15 +2,19 @@
 
 Menu3D 是一个炫酷的 3D 旋转菜单组件，支持自动旋转、鼠标拖拽控制和交互式菜单选择。 🎯
 
+:::tip\{title="Features"}
+
 - **3D视觉效果** 🔍：使用 CSS 3D transform 实现立体旋转效果
 - **自动旋转** 📱：默认自动旋转，鼠标悬停时暂停
 - **拖拽控制** ⚡：支持鼠标拖拽调整旋转角度
 - **交互式菜单** 📐：点击菜单项触发回调事件
 - **流畅动画** 🎨：使用 requestAnimationFrame 实现流畅的旋转动画
 
-## 代码演示 📝
+:::
 
-### 基本用法 🔧
+## 代码演示
+
+### 基本用法
 
 ```tsx preview
 import React from "react";
@@ -85,6 +89,8 @@ export default BasicDemo;
 ```
 
 ### 自定义渲染菜单
+
+通过 `customItemRender` 属性自定义渲染菜单项，实现更复杂的视觉效果。
 
 ```tsx preview
 import React from "react";
@@ -177,7 +183,7 @@ const CustomDemo: React.FC = () => {
 export default CustomDemo;
 ```
 
-### 自定义旋转半径 🎯
+### 自定义旋转半径
 
 通过 `rotateRadius` 属性调整菜单项距离中心的距离，实现不同的视觉效果。
 
@@ -286,7 +292,7 @@ const RadiusDemo: React.FC = () => {
 export default RadiusDemo;
 ```
 
-### 隐藏背面效果 🎭
+### 隐藏背面效果
 
 通过 `backfaceVisibility` 属性控制是否显示菜单项的背面，实现不同的视觉效果。
 
@@ -362,7 +368,7 @@ const BackfaceDemo: React.FC = () => {
             <div
                 style={{
                     position: "absolute",
-                    bottom: "20px",
+                    bottom: "0px",
                     left: "20px",
                     padding: "10px",
                     background: "var(--rp-c-bg-soft)",
@@ -380,9 +386,9 @@ const BackfaceDemo: React.FC = () => {
 export default BackfaceDemo;
 ```
 
-## API 📚
+## API
 
-### Menu3DProps ⚙️
+### Menu3DProps
 
 | 属性               | 说明                 | 类型                              | 默认值 | 版本 |
 | ------------------ | -------------------- | --------------------------------- | ------ | ---- |
@@ -393,7 +399,7 @@ export default BackfaceDemo;
 | customItemRender   | 自定义菜单项渲染函数 | `(menu: Menu) => React.ReactNode` | -      | -    |
 | onMenuClick        | 菜单点击回调函数     | `(menuId: string) => void`        | -      | -    |
 
-### Menu 类型定义 🔖
+### Menu 类型定义
 
 ```typescript
 type Menu = {
@@ -403,7 +409,7 @@ type Menu = {
 };
 ```
 
-## 特性说明 🎯
+## 特性说明
 
 ### 3D旋转效果
 
@@ -454,35 +460,43 @@ type Menu = {
 - 设置为 false 时隐藏背面（使用 `backface-visibility: hidden`）
 - 隐藏背面可以避免菜单项翻转时的视觉干扰
 
-## 最佳实践 💡
+:::info\{title="最佳实践"}
 
-1. **菜单设计**：
-    - 使用简洁明了的图标和标题
-    - 保持菜单项数量适中（5-10个）
-    - 为每个菜单项提供清晰的 id 标识
+**菜单设计**：
 
-2. **交互反馈**：
+    - 使用简洁明了的图标和标题 - 保持菜单项数量适中（5-10个）
+    - 为每个菜单项提供唯一的 id 标识
+
+**交互反馈**：
+
     - 在 `onMenuClick` 回调中提供明确的反馈
     - 可以结合路由跳转或页面滚动
 
-3. **样式定制**：
-    - 可以通过修改 Less 样式文件定制外观
+**样式定制**：
+
+    - 可以通过传入 `menuClassName` 属性自定义类名
     - 调整颜色、阴影、圆角等视觉效果
 
-4. **响应式考虑**：
+**响应式考虑**：
+
     - 在移动设备上可能需要调整菜单大小
     - 考虑在小屏幕上使用替代方案
 
-5. **旋转半径选择**：
+**旋转半径选择**：
+
     - 根据菜单项数量选择合适的半径
     - 测试不同半径值，找到最佳视觉效果
 
-6. **自定义渲染**：
+**自定义渲染**：
+
     - 使用 `customItemRender` 实现完全自定义的菜单项样式
     - 可以添加动画效果、交互元素等
     - 保持自定义样式与整体设计风格一致
 
-7. **透明度优化**：
+**透明度优化**：
+
     - 利用动态透明度效果增强用户体验
     - 面向用户的菜单项更突出，便于点击
     - 背向的菜单项淡化，减少视觉干扰
+
+:::

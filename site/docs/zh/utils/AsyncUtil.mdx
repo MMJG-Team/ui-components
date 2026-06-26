@@ -4,6 +4,14 @@
 
 `AsyncUtil` 提供了一组实用的异步工具函数，用于处理异步操作和流式数据。它包含延迟执行函数和模拟异步流式分片函数，适用于需要精确控制异步流程的场景。
 
+:::tip 导入
+
+```ts
+import { AsyncUtil } from "@mmjg/ui-components";
+```
+
+:::
+
 ## 使用示例
 
 ### delay 延迟执行
@@ -87,11 +95,11 @@ const DelayDemo: React.FC = () => {
                         padding: "8px 16px",
                         borderRadius: "4px",
                         background: "var(--rp-c-brand)",
-                        color: "var(--rp-c-bg)",
+                        color: "#fff",
                         opacity: status === "执行中" ? 0.6 : 1,
                     }}
                 >
-                    开始延迟 (3秒)
+                    开始(延迟3秒)
                 </button>
                 <button
                     onClick={cancelDelay}
@@ -229,7 +237,7 @@ const CustomChunkDemo: React.FC = () => {
                         padding: "8px 16px",
                         borderRadius: "4px",
                         background: "var(--rp-c-brand)",
-                        color: "var(--rp-c-bg)",
+                        color: "#fff",
                         opacity: isStreaming ? 0.6 : 1,
                         cursor: isStreaming ? "not-allowed" : "pointer",
                     }}
@@ -278,6 +286,15 @@ export default CustomChunkDemo;
 | `promise` | `Promise<void>` | 延迟执行的 Promise |
 | `cancel`  | `() => void`    | 取消延迟执行的函数 |
 
+:::tip 工作原理
+
+1. **Promise 创建**：创建一个 Promise，在指定时间后 resolve
+2. **定时器管理**：使用 setTimeout 实现延迟
+3. **取消机制**：提供 cancel 函数，可以提前取消延迟
+4. **清理工作**：取消时清除定时器并 reject Promise
+
+:::
+
 ### mockAsyncChunk(content, options)
 
 模拟异步流式分片传输。
@@ -314,16 +331,7 @@ onComplete?: (final: string) => void
 | `chunk`   | `string` | 本次传输的片段       |
 | `final`   | `string` | 传输完成后的完整内容 |
 
-## 工作原理
-
-### delay 函数
-
-1. **Promise 创建**：创建一个 Promise，在指定时间后 resolve
-2. **定时器管理**：使用 setTimeout 实现延迟
-3. **取消机制**：提供 cancel 函数，可以提前取消延迟
-4. **清理工作**：取消时清除定时器并 reject Promise
-
-### mockAsyncChunk 函数
+:::tip 工作原理
 
 1. **分片传输**：将内容按指定大小分片
 2. **异步循环**：使用 async/await 循环传输每个分片
@@ -331,10 +339,4 @@ onComplete?: (final: string) => void
 4. **回调通知**：每次传输和完成时调用回调函数
 5. **取消支持**：提供取消函数，可以随时停止传输
 
-## 使用场景
-
-1. **延迟执行**：需要在指定时间后执行操作，并支持取消
-2. **流式数据模拟**：模拟服务端流式返回数据的效果
-3. **打字机效果**：实现逐字符或逐词显示的打字机效果
-4. **动画序列**：按时间顺序执行动画效果
-5. **测试和演示**：在测试或演示中模拟异步行为
+:::
