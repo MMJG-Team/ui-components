@@ -6,8 +6,9 @@
     "scripts": {
         "dev": "pnpm --filter ./site run dev",
         "build:docs": "pnpm --filter ./site run build",
-        "build": "pnpm --filter ./packages/ui-components run build",
-        "publish": "pnpm --filter ./packages/ui-components run publish "
+        "build:ui-components": "pnpm --filter ./packages/ui-components run build",
+        "publish:ui-components": "pnpm --filter ./packages/ui-components run publish",
+        "prepublishOnly": "pnpm run build:ui-components"
     },
     "keywords": [],
     "author": "MMJG-Team",

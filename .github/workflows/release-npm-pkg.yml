@@ -1,0 +1,52 @@
+name: Release NPM Packages
+
+# 触发条件：main 分支推送 changeset 版本文件
+on:
+    push:
+        branches: [main]
+        paths:
+            - ".changeset/**"
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 1
+
+            - name: Setup Node + pnpm
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22.18.0
+
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 10.12.1
+
+            - name: Install all monorepo dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Set npm auth token
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+
+            - name: Update versions & generate changelog
+              run: pnpm exec changeset version
+
+            - name: Commit version bump & push tag
+              run: |
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+                  git add .
+                  git commit -m "chore: bump package versions from changesets"
+                  git push --follow-tags
+
+            - name: Publish packages to npm
+              run: pnpm run publish:ui-components
