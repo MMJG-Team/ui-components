@@ -1,2 +1,3 @@
 export * from './Masonry';
 export * from './Menu3D';
+export * from './Shimmer';
