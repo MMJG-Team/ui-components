@@ -100,11 +100,14 @@ const AutoLoadMoreDemo: React.FC = () => {
                 <div
                     ref={containerRef}
                     style={{
-                        height: "212px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "12px",
+                        height: "236px",
                         overflow: "auto",
                         margin: "10px 6px",
                         padding: "0 12px",
-                        minHeight: "200px",
+                        minHeight: "236px",
                         maxWidth: "100%",
                         resize: "both",
                     }}
@@ -114,9 +117,8 @@ const AutoLoadMoreDemo: React.FC = () => {
                             key={index}
                             style={{
                                 padding: "4px 10px",
-                                margin: "5px 0",
                                 borderRadius: "4px",
-                                border: "1px solid #ccc",
+                                border: "1px dashed #a0a0a09e",
                             }}
                         >
                             条目 {item}

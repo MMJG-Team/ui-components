@@ -21,12 +21,14 @@ import React, { useState } from "react";
 import { AsyncUtil } from "@mmjg/ui-components";
 
 const DelayDemo: React.FC = () => {
-    const [status, setStatus] = useState("等待");
+    const [status, setStatus] = useState<
+        "idle" | "executing" | "completed" | "canceled"
+    >("idle");
     const [progress, setProgress] = useState(0);
     const [cancelToken, setCancelToken] = useState<any>(null);
 
     const startDelay = async () => {
-        setStatus("等待中");
+        setStatus("executing");
         setProgress(0);
 
         try {
@@ -38,9 +40,9 @@ const DelayDemo: React.FC = () => {
 
             setProgress(100);
 
-            setStatus("完成");
+            setStatus("completed");
         } catch (error) {
-            setStatus("已取消");
+            setStatus("canceled");
             setProgress(0);
         }
     };
@@ -90,26 +92,30 @@ const DelayDemo: React.FC = () => {
             <div style={{ display: "flex", gap: "10px" }}>
                 <button
                     onClick={startDelay}
-                    disabled={status === "执行中"}
+                    disabled={status === "executing"}
                     style={{
                         padding: "8px 16px",
                         borderRadius: "4px",
                         background: "var(--rp-c-brand)",
                         color: "#fff",
-                        opacity: status === "执行中" ? 0.6 : 1,
+                        opacity: status === "executing" ? 0.6 : 1,
+                        cursor:
+                            status === "executing" ? "not-allowed" : "pointer",
                     }}
                 >
                     开始(延迟3秒)
                 </button>
                 <button
                     onClick={cancelDelay}
-                    disabled={status !== "执行中"}
+                    disabled={status !== "executing"}
                     style={{
                         padding: "8px 16px",
                         borderRadius: "4px",
                         background: "var(--rp-c-bg-soft)",
                         color: "var(--rp-c-text-1)",
-                        opacity: status !== "执行中" ? 0.6 : 1,
+                        opacity: status !== "executing" ? 0.6 : 1,
+                        cursor:
+                            status !== "executing" ? "not-allowed" : "pointer",
                     }}
                 >
                     取消
