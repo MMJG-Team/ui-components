@@ -17,6 +17,12 @@ export type ShimmerProps = {
      */
     type?: "text" | "container";
     /**
+     * shimmer 宽度
+     * @default 10
+     * @description shimmer 宽度，默认值为 10, 仅在 type 为 "container" 时生效
+     */
+    width?: number;
+    /**
      * shimmer 颜色
      * @default "#ffffffff"
      * @description shimmer 颜色，默认值为 "#ffffffff"
@@ -43,9 +49,19 @@ export const Shimmer = (props: ShimmerProps) => {
         style,
         children,
         type = "text",
+        width = 10,
         color = "#ffffffff",
         duration = 2,
     } = props;
+
+    useEffect(() => {
+        if (containerRef.current && typeof width === "number") {
+            containerRef.current.style.setProperty(
+                "--shimmer-width",
+                `${width}px`,
+            );
+        }
+    }, [width]);
 
     useEffect(() => {
         if (containerRef.current && color) {

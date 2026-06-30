@@ -1,6 +1,16 @@
 # Shimmer 流光效果
 
-Shimmer 是一个流光效果组件
+Shimmer 是一个流光效果组件，用于为文本或容器添加炫酷的流光动画效果。 ✨
+
+:::tip 特性
+
+- **文本流光** 🔍：为文本添加流光动画，增强视觉吸引力
+- **容器流光** 📱：为容器添加斜向流光效果，提升设计感
+- **自定义颜色** ⚡：支持自定义流光颜色，适配不同设计风格
+- **自定义持续时间** 📐：可调整流光动画的速度，控制视觉效果
+- **灵活应用** 🎨：支持任何 React 子元素，应用场景广泛
+
+:::
 
 ## 代码演示
 
@@ -23,13 +33,14 @@ const BasicDemo: React.FC = () => {
                     display: "flex",
                     justifyContent: "center",
                     width: "fit-content",
-                    border: "1px dashed var(--rp-c-brand)",
-                    borderRadius: "4px",
-                    padding: "0px 20px",
                     fontSize: "32px",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    backgroundColor: "#23232380",
+                    border: "1px dashed var(--rp-c-brand)",
                 }}
             >
-                Shimmer Effect
+                Text Effect
             </Shimmer>
         </div>
     );
@@ -37,3 +48,277 @@ const BasicDemo: React.FC = () => {
 
 export default BasicDemo;
 ```
+
+### 容器流光效果 📦
+
+通过 `type="container"` 为容器添加流光效果，适合用于卡片、按钮等容器元素。同时，可以通过 `width` 属性自定义流光的宽度。
+
+```tsx preview
+import React from "react";
+import { Shimmer } from "@mmjg/ui-components";
+
+const ContainerDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                justifyContent: "center",
+            }}
+        >
+            <Shimmer
+                type="container"
+                width={100}
+                color="rgba(255, 255, 255, 0.5)"
+                duration={3}
+                style={{
+                    width: "200px",
+                    height: "80px",
+                    background: "var(--rp-c-brand)",
+                    borderRadius: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#ffffffff",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "24px" }}>Container Effect</div>
+                </div>
+            </Shimmer>
+        </div>
+    );
+};
+
+export default ContainerDemo;
+```
+
+### 自定义流光颜色 🎨
+
+通过 `color` 属性自定义流光颜色，适配不同的设计风格和主题。
+
+```tsx preview
+import React from "react";
+import { Shimmer } from "@mmjg/ui-components";
+
+const ColorDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                alignItems: "center",
+            }}
+        >
+            <Shimmer
+                type="text"
+                color="var(--rp-c-brand)"
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "fit-content",
+                    fontSize: "32px",
+                    padding: "10px 20px",
+                    borderRadius: "8px",
+                    backgroundColor: "#23232380",
+                    border: "1px dashed var(--rp-c-brand)",
+                }}
+            >
+                Text Effect
+            </Shimmer>
+        </div>
+    );
+};
+
+export default ColorDemo;
+```
+
+:::warning 注意
+在 `type="text"` 类型下，由于该效果使用了 `background-clip: text`, 文字部分会被裁剪掉，`color` 属性无效，如果要控制文字的颜色，可以在 `style` 中设置 `backgroundColor` 属性来变通实现。
+
+:::
+
+### 自定义动画速度 ⚡
+
+通过 `duration` 属性调整流光动画的速度，控制视觉效果和用户体验。
+
+```tsx preview
+import React from "react";
+import { Shimmer } from "@mmjg/ui-components";
+
+const textStyle = {
+    display: "flex",
+    justifyContent: "center",
+    width: "fit-content",
+    fontSize: "24px",
+    padding: "2px 20px",
+    borderRadius: "8px",
+    backgroundColor: "#23232380",
+    border: "1px dashed var(--rp-c-brand)",
+};
+
+const DurationDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                alignItems: "center",
+            }}
+        >
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "12px",
+                    marginBottom: "10px",
+                }}
+            >
+                观察不同持续时间的流光效果差异
+            </div>
+
+            <Shimmer type="text" duration={1} style={textStyle}>
+                快速流光
+            </Shimmer>
+
+            <Shimmer type="text" duration={2} style={textStyle}>
+                正常速度
+            </Shimmer>
+
+            <Shimmer type="text" duration={4} style={textStyle}>
+                缓慢流光
+            </Shimmer>
+        </div>
+    );
+};
+
+export default DurationDemo;
+```
+
+### 实际应用场景 🎯
+
+展示 Shimmer 组件在实际场景中的应用，如标题、按钮、卡片等。
+
+```tsx preview
+import React from "react";
+import { Shimmer } from "@mmjg/ui-components";
+
+const ApplicationDemo: React.FC = () => {
+    return (
+        <div style={{ maxWidth: "600px", margin: "0 auto" }}>
+            {/* 标题流光 */}
+            <Shimmer
+                type="text"
+                color="var(--rp-c-brand)"
+                duration={3}
+                style={{
+                    fontSize: "36px",
+                    fontWeight: "bold",
+                    marginBottom: "20px",
+                    textAlign: "center",
+                    backgroundColor: "#23232380",
+                }}
+            >
+                欢迎使用 Shimmer
+            </Shimmer>
+
+            {/* 按钮流光 */}
+            <div
+                style={{
+                    display: "flex",
+                    gap: "15px",
+                    justifyContent: "center",
+                    marginBottom: "20px",
+                }}
+            >
+                <Shimmer
+                    type="container"
+                    color="rgba(255, 255, 255, 0.4)"
+                    width={30}
+                    duration={3}
+                    style={{
+                        padding: "12px 24px",
+                        background: "var(--rp-c-brand)",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                    }}
+                >
+                    立即开始
+                </Shimmer>
+
+                <Shimmer
+                    type="container"
+                    color="rgba(255, 255, 255, 0.3)"
+                    width={30}
+                    duration={3}
+                    style={{
+                        padding: "12px 24px",
+                        background: "#23232380",
+                        borderRadius: "6px",
+                        color: "#fff",
+                        fontSize: "16px",
+                        border: "1px dashed var(--rp-c-brand)",
+                        cursor: "pointer",
+                    }}
+                >
+                    了解更多
+                </Shimmer>
+            </div>
+
+            {/* 卡片流光 */}
+            <Shimmer
+                type="container"
+                color="var(--rp-c-brand)"
+                width={120}
+                duration={3}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg)",
+                    borderRadius: "8px",
+                    border: "1px dashed var(--rp-c-brand)",
+                    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+                }}
+            >
+                <div style={{ color: "var(--rp-c-text-1)" }}>
+                    <h3 style={{ margin: "0 0 10px 0", fontSize: "20px" }}>
+                        特色功能
+                    </h3>
+                    <p
+                        style={{
+                            margin: 0,
+                            fontSize: "14px",
+                            lineHeight: "1.6",
+                        }}
+                    >
+                        Shimmer
+                        组件支持文本和容器两种流光类型，可以自定义颜色和动画速度，
+                        适用于标题、按钮、卡片等多种场景，为您的应用增添视觉吸引力。
+                    </p>
+                </div>
+            </Shimmer>
+        </div>
+    );
+};
+
+export default ApplicationDemo;
+```
+
+## API 📚
+
+### ShimmerProps ⚙️
+
+| 属性      | 说明                           | 类型                    | 默认值      | 版本 |
+| --------- | ------------------------------ | ----------------------- | ----------- | ---- |
+| children  | 子元素                         | `ReactNode`             | -           | -    |
+| type      | 流光类型                       | `"text" \| "container"` | "text"      | -    |
+| width     | 流光宽度（`仅对容器类型生效`） | `number`                | 10          | -    |
+| color     | 流光颜色                       | `string`                | "#ffffffff" | -    |
+| duration  | 动画持续时间（秒）             | `number`                | 2           | -    |
+| className | 自定义类名                     | `string`                | -           | -    |
+| style     | 自定义样式                     | `React.CSSProperties`   | -           | -    |
