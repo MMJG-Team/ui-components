@@ -6,10 +6,15 @@ export type BorderEffectProps = {
     className?: string;
     style?: React.CSSProperties;
     children?: React.ReactNode;
+    // border width
     width?: number;
+    // border color
     color?: string;
+    // rotate duration
     duration?: number;
+    // border radius
     borderRadius?: CSSProperties["borderRadius"];
+    // border effect config
     effects?: {
         percent: number;
         color: string;
