@@ -1,0 +1,544 @@
+# BorderEffect 边框效果
+
+BorderEffect 是一个边框效果组件，用于为容器添加炫酷的旋转边框动画效果。 ✨
+
+:::tip 特性
+
+- **旋转边框** 🔍：圆形旋转边框动画，持续旋转形成动态效果
+- **自定义宽度** 📏：支持自定义边框宽度，控制视觉效果
+- **自定义颜色** ⚡：支持自定义边框颜色，适配不同设计风格
+- **自定义持续时间** 📐：可调整旋转动画的速度，控制动画节奏
+- **自定义圆角** 🎨：支持自定义容器圆角，适配不同形状
+- **自定义效果** 🌈：支持自定义渐变效果，实现复杂边框样式
+
+:::
+
+## 代码演示
+
+### 基本用法
+
+```tsx preview
+import React from "react";
+import { BorderEffect } from "@mmjg/ui-components";
+
+const BasicDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+            }}
+        >
+            <BorderEffect color="var(--rp-c-brand)">Border Effect</BorderEffect>
+        </div>
+    );
+};
+
+export default BasicDemo;
+```
+
+### 自定义边框宽度 📏
+
+通过 `width` 属性调整边框宽度，实现不同的视觉效果。
+
+```tsx preview
+import React from "react";
+import { BorderEffect } from "@mmjg/ui-components";
+
+const WidthDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <BorderEffect
+                width={1}
+                color="var(--rp-c-brand)"
+                borderRadius={8}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px" }}>细边框 (1px)</div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                width={3}
+                color="var(--rp-c-brand)"
+                borderRadius={8}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px" }}>中等边框 (3px)</div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                width={6}
+                color="var(--rp-c-brand)"
+                borderRadius={8}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px" }}>粗边框 (6px)</div>
+                </div>
+            </BorderEffect>
+        </div>
+    );
+};
+
+export default WidthDemo;
+```
+
+### 自定义边框颜色 🎨
+
+通过 `color` 属性自定义边框颜色，适配不同的设计风格和主题。
+
+```tsx preview
+import React from "react";
+import { BorderEffect } from "@mmjg/ui-components";
+
+const ColorDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <BorderEffect
+                color="#ff6b6b"
+                borderRadius={12}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "18px", marginBottom: "5px" }}>
+                        🔥
+                    </div>
+                    <div style={{ fontSize: "14px" }}>红色边框</div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                color="#4ecdc4"
+                borderRadius={12}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "18px", marginBottom: "5px" }}>
+                        🌿
+                    </div>
+                    <div style={{ fontSize: "14px" }}>绿色边框</div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                color="var(--rp-c-brand)"
+                borderRadius={12}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "18px", marginBottom: "5px" }}>
+                        ⭐
+                    </div>
+                    <div style={{ fontSize: "14px" }}>品牌色边框</div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                color="rgba(255, 255, 255, 0.6)"
+                borderRadius={12}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "18px", marginBottom: "5px" }}>
+                        ✨
+                    </div>
+                    <div style={{ fontSize: "14px" }}>半透明边框</div>
+                </div>
+            </BorderEffect>
+        </div>
+    );
+};
+
+export default ColorDemo;
+```
+
+### 自定义动画速度 ⚡
+
+通过 `duration` 属性调整旋转动画的速度，控制视觉效果和用户体验。
+
+```tsx preview
+import React from "react";
+import { BorderEffect } from "@mmjg/ui-components";
+
+const DurationDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <BorderEffect
+                duration={1}
+                color="var(--rp-c-brand)"
+                borderRadius={10}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px", marginBottom: "5px" }}>
+                        快速旋转
+                    </div>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "var(--rp-c-text-2)",
+                        }}
+                    >
+                        1秒/圈
+                    </div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                duration={2}
+                color="var(--rp-c-brand)"
+                borderRadius={10}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px", marginBottom: "5px" }}>
+                        正常速度
+                    </div>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "var(--rp-c-text-2)",
+                        }}
+                    >
+                        2秒/圈
+                    </div>
+                </div>
+            </BorderEffect>
+
+            <BorderEffect
+                duration={4}
+                color="var(--rp-c-brand)"
+                borderRadius={10}
+                style={{
+                    padding: "20px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px", marginBottom: "5px" }}>
+                        缓慢旋转
+                    </div>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "var(--rp-c-text-2)",
+                        }}
+                    >
+                        4秒/圈
+                    </div>
+                </div>
+            </BorderEffect>
+        </div>
+    );
+};
+
+export default DurationDemo;
+```
+
+### 自定义圆角形状 📐
+
+通过 `borderRadius` 属性自定义容器圆角，适配不同的设计需求。
+
+```tsx preview
+import React from "react";
+import { BorderEffect } from "@mmjg/ui-components";
+
+const BorderRadiusDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <BorderEffect
+                borderRadius={0}
+                color="var(--rp-c-brand)"
+                width={3}
+                style={{
+                    padding: "20px",
+                    width: "120px",
+                    height: "80px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                直角 (0px)
+            </BorderEffect>
+
+            <BorderEffect
+                borderRadius={8}
+                color="var(--rp-c-brand)"
+                width={3}
+                style={{
+                    padding: "20px",
+                    width: "120px",
+                    height: "80px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                小圆角 (8px)
+            </BorderEffect>
+
+            <BorderEffect
+                borderRadius={16}
+                color="var(--rp-c-brand)"
+                width={3}
+                style={{
+                    padding: "20px",
+                    width: "120px",
+                    height: "80px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                大圆角 (16px)
+            </BorderEffect>
+
+            <BorderEffect
+                borderRadius="50%"
+                color="var(--rp-c-brand)"
+                width={3}
+                style={{
+                    padding: "20px",
+                    width: "80px",
+                    height: "80px",
+                    background: "var(--rp-c-bg-soft)",
+                    color: "var(--rp-c-text-1)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                圆形
+            </BorderEffect>
+        </div>
+    );
+};
+
+export default BorderRadiusDemo;
+```
+
+### 自定义渐变效果 🌈
+
+通过 `effects` 属性自定义渐变效果，实现复杂的边框样式。
+
+```tsx preview
+import React from "react";
+import { BorderEffect } from "@mmjg/ui-components";
+
+const EffectsDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                gap: "20px",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            {/* 单色渐变 */}
+            <BorderEffect
+                color="var(--rp-c-brand)"
+                borderRadius={12}
+                width={4}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px", marginBottom: "5px" }}>
+                        单色效果
+                    </div>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "var(--rp-c-text-2)",
+                        }}
+                    >
+                        默认渐变
+                    </div>
+                </div>
+            </BorderEffect>
+
+            {/* 多色渐变 */}
+            <BorderEffect
+                effects={[
+                    { color: "#ff6b6b", percent: 0 },
+                    { color: "#4ecdc4", percent: 25 },
+                    { color: "#ffe66d", percent: 50 },
+                    { color: "#95e1d3", percent: 75 },
+                    { color: "#ff6b6b", percent: 100 },
+                ]}
+                borderRadius={12}
+                width={4}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px", marginBottom: "5px" }}>
+                        多彩渐变
+                    </div>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "var(--rp-c-text-2)",
+                        }}
+                    >
+                        自定义颜色
+                    </div>
+                </div>
+            </BorderEffect>
+
+            {/* 跳跃渐变 */}
+            <BorderEffect
+                effects={[
+                    { color: "var(--rp-c-brand)", percent: 0 },
+                    { color: "var(--rp-c-brand)", percent: 15 },
+                    { color: "transparent", percent: 15 },
+                    { color: "transparent", percent: 30 },
+                    { color: "var(--rp-c-brand)", percent: 30 },
+                    { color: "var(--rp-c-brand)", percent: 45 },
+                    { color: "transparent", percent: 45 },
+                    { color: "transparent", percent: 100 },
+                ]}
+                borderRadius={12}
+                width={4}
+                style={{
+                    padding: "25px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                }}
+            >
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: "16px", marginBottom: "5px" }}>
+                        跳跃效果
+                    </div>
+                    <div
+                        style={{
+                            fontSize: "12px",
+                            color: "var(--rp-c-text-2)",
+                        }}
+                    >
+                        间断渐变
+                    </div>
+                </div>
+            </BorderEffect>
+        </div>
+    );
+};
+
+export default EffectsDemo;
+```
+
+## API 📚
+
+### BorderEffectProps ⚙️
+
+| 属性         | 说明               | 类型                                   | 默认值      | 版本 |
+| ------------ | ------------------ | -------------------------------------- | ----------- | ---- |
+| children     | 子元素             | `ReactNode`                            | -           | -    |
+| width        | 边框宽度（像素）   | `number`                               | 2           | -    |
+| color        | 边框颜色           | `string`                               | "#ffffffff" | -    |
+| duration     | 动画持续时间（秒） | `number`                               | 2           | -    |
+| borderRadius | 容器圆角           | `CSSProperties["borderRadius"]`        | 2           | -    |
+| effects      | 自定义渐变效果     | `{ percent: number; color: string }[]` | []          | -    |
+| className    | 自定义类名         | `string`                               | -           | -    |
+| style        | 自定义样式         | `React.CSSProperties`                  | -           | -    |
+
+### effects 类型定义
+
+```typescript
+type Effect = {
+    percent: number; // 渐变百分比位置 (0-100)
+    color: string; // 颜色值
+};
+```
+
+:::tip
+
+- `effects` 数组用于定义 `conic-gradient` 的渐变点
+- 每个渐变点由 `percent`（百分比位置）和 `color`（颜色）组成
+- 渐变从 0 度开始，顺时针旋转
+- 当提供 `effects` 时，`color` 属性会被忽略
+
+:::

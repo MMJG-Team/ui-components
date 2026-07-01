@@ -1,0 +1,60 @@
+.border-effect {
+    position: relative;
+    overflow: hidden;
+
+    --border-width: 2px;
+    --border-color: #ffffffff;
+    --border-effect-duration: 2s;
+
+    .border-effect-content {
+        margin: var(--border-width);
+    }
+
+    .border-effect-core {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        padding: var(--border-width);
+
+        // 内容裁剪，只显示padding区域
+        mask-image:
+            linear-gradient(#000000, #000000), linear-gradient(#000000, #000000);
+        mask-size:
+            100% 100%,
+            100% 100%;
+        mask-clip: content-box, border-box;
+        mask-composite: exclude;
+
+        .border-effect-core-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150%;
+            aspect-ratio: 1 / 1;
+
+            background-image: conic-gradient(
+                from 0deg,
+                var(--border-color) 0%,
+                var(--border-color) 10%,
+                transparent 10%,
+                transparent 100%
+            );
+
+            animation: border-effect-border var(--border-effect-duration) linear
+                infinite;
+
+            @keyframes border-effect-border {
+                0% {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                }
+                100% {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
+            }
+        }
+    }
+}
