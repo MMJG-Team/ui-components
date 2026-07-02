@@ -1,5 +1,6 @@
 .partition-layout {
     display: flex;
+    user-select: none;
 
     .partition-layout-content {
         flex: 1;
@@ -35,6 +36,23 @@
             &::after {
                 background-color: #e5e5e5;
             }
+        }
+    }
+}
+
+.partition-layout.partition-layout-stack {
+    position: relative;
+
+    .partition-layout-sub-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        transition: none;
+
+        &.hidden {
+            display: none;
         }
     }
 }

@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import styles from "./style.module.less";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { useBoxSizeObserver, useMouseDragOffset } from "../../hooks";
 
 export type PartitionLayoutProps = {
@@ -13,12 +13,22 @@ export type PartitionLayoutProps = {
     gap?: CSSProperties["gap"];
     subContent?: React.ReactNode;
     subContentDefaultWidth?: CSSProperties["width"];
+    /**
+     * Limit
+     * @description Limit the sub content width and children width
+     */
     limit?: {
         childrenMinWidth?: number;
         subContentMinWidth?: number;
     };
 
     draglineClassName?: string;
+    /**
+     * Break point
+     * @description if breakPoint is set, the layout will be responsive,
+     * when the width of the container is less than breakPoint, the sub content will float and the children will be stacked
+     */
+    breakPoint?: number;
 };
 
 // layout default width
@@ -33,6 +43,8 @@ const DEFAULT_GAP = 0;
 const DEFAULT_CHILDREN_MIN_WIDTH = 0;
 // sub content default min width
 const DEFAULT_SUB_CONTENT_MIN_WIDTH = 0;
+// default break point
+const DEFAULT_BREAK_POINT = 0;
 
 /**
  * Partition layout component
@@ -56,6 +68,7 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
         },
 
         draglineClassName,
+        breakPoint = DEFAULT_BREAK_POINT,
     } = props;
 
     /**
@@ -72,6 +85,12 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
         subContentDefaultWidth,
     );
 
+    /**
+     * drag line
+     * @description Drag line to adjust sub content width
+     *
+     * onMouseDown will bind to drag line element
+     */
     const { isDragging, onMouseDown } = useMouseDragOffset({
         onDrag: (offset) => {
             setSubContentWidth((current) => {
@@ -86,7 +105,7 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
                     // clamp next pixel to min width and max width
                     const safeNextPx = Math.min(
                         Math.max(nextPx, limit.subContentMinWidth ?? 0),
-                        containerSize.width,
+                        containerSize.width - (limit.childrenMinWidth ?? 0),
                     );
 
                     // convert pixel to percent
@@ -102,13 +121,17 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
 
                 const safeNextPx = Math.min(
                     Math.max(nextPx, limit.subContentMinWidth ?? 0),
-                    containerSize.width,
+                    containerSize.width - (limit.childrenMinWidth ?? 0),
                 );
 
                 return safeNextPx;
             });
         },
     });
+
+    const layoutMode = useMemo(() => {
+        return containerSize.width < breakPoint ? "stack" : "normal";
+    }, [containerSize.width, breakPoint]);
 
     // layout style
     const layoutStyle = useMemo(
@@ -146,7 +169,11 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
     return (
         <div
             ref={containerRef}
-            className={classNames(styles["partition-layout"], className)}
+            className={classNames(
+                styles["partition-layout"],
+                styles[`partition-layout-${layoutMode}`],
+                className,
+            )}
             style={layoutStyle}
         >
             <div
@@ -156,7 +183,7 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
                 {children}
             </div>
 
-            {subContent && (
+            {layoutMode === "normal" && subContent && (
                 <div
                     className={classNames(
                         styles["partition-layout-drag-line"],
@@ -170,6 +197,7 @@ export const PartitionLayout = (props: PartitionLayoutProps) => {
             <div
                 className={classNames(
                     styles["partition-layout-sub-content"],
+                    !subContent && styles["hidden"],
                     isDragging && styles["dragging"],
                 )}
                 style={subContentStyle}
