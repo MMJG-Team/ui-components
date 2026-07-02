@@ -1,6 +1,17 @@
 # PartitionLayout 分区布局组件
 
-PartitionLayout 是一个组件，用于为容器添加炫酷的分区布局效果。 ✨
+PartitionLayout 是一个分区布局组件，用于实现主内容和子内容的动态分隔布局。 ✨
+
+:::tip 特性
+
+- **动态分区** 🔍：支持主内容和子内容的动态分隔，通过拖拽调整分区比例
+- **可拖拽分隔线** 📏：提供可拖拽的分隔线，用户可以自由调整分区宽度
+- **自定义尺寸** ⚡：支持自定义布局的宽度、高度和间距
+- **响应式布局** 📐：支持断点设置，在小屏幕下自动切换为堆叠模式
+- **宽度限制** 🎨：支持设置最小宽度限制，防止分区过小或过大
+- **动态显示** 🌈：支持动态显示/隐藏子内容，灵活控制布局
+
+:::
 
 ## 代码演示
 
@@ -17,13 +28,26 @@ const BasicDemo: React.FC = () => {
         setSubContent(
             <div
                 style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
                     width: "100%",
                     height: "100%",
                     border: "1px dashed var(--rp-c-brand)",
                 }}
             >
                 <span>详情</span>
-                <button onClick={() => setSubContent(null)}>关闭</button>
+                <button
+                    style={{
+                        padding: "2px 10px",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                    }}
+                    onClick={() => setSubContent(null)}
+                >
+                    关闭
+                </button>
             </div>,
         );
     };
@@ -32,13 +56,26 @@ const BasicDemo: React.FC = () => {
         <PartitionLayout width={"100%"} height={300} subContent={subContent}>
             <div
                 style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
                     width: "100%",
                     height: "100%",
                     border: "1px dashed var(--rp-c-brand)",
                 }}
             >
                 <div>内容</div>
-                <button onClick={onClick}>查看详情</button>
+                <button
+                    style={{
+                        padding: "2px 10px",
+                        borderRadius: 4,
+                        cursor: "pointer",
+                    }}
+                    onClick={onClick}
+                >
+                    查看详情
+                </button>
             </div>
         </PartitionLayout>
     );
@@ -46,3 +83,846 @@ const BasicDemo: React.FC = () => {
 
 export default BasicDemo;
 ```
+
+### 自定义分区比例 📏
+
+通过 `subContentDefaultWidth` 属性设置子内容的默认宽度，实现不同的分区比例。
+
+```tsx preview
+import React, { useState } from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const RatioDemo: React.FC = () => {
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {/* 30% 子内容 */}
+            <PartitionLayout
+                width="100%"
+                height={150}
+                subContentDefaultWidth="30%"
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-bg-soft)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        子内容 (30%)
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    主内容 (70%)
+                </div>
+            </PartitionLayout>
+
+            {/* 40% 子内容 */}
+            <PartitionLayout
+                width="100%"
+                height={150}
+                subContentDefaultWidth="40%"
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-bg-soft)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        子内容 (40%)
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    主内容 (60%)
+                </div>
+            </PartitionLayout>
+
+            {/* 固定宽度子内容 */}
+            <PartitionLayout
+                width="100%"
+                height={150}
+                subContentDefaultWidth="200px"
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-bg-soft)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        子内容 (200px)
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    主内容 (自适应)
+                </div>
+            </PartitionLayout>
+        </div>
+    );
+};
+
+export default RatioDemo;
+```
+
+### 宽度限制设置 ⚡
+
+通过 `limit` 属性设置最小宽度限制，防止分区过小或过大。
+
+```tsx preview
+import React from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const LimitDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                padding: "10px",
+                background: "var(--rp-c-bg-soft)",
+                borderRadius: "4px",
+                marginBottom: "10px",
+                color: "var(--rp-c-text-2)",
+            }}
+        >
+            <p style={{ margin: "5px 0" }}>尝试拖拽分隔线，观察宽度限制效果</p>
+            <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                主内容最小宽度: 300px，子内容最小宽度: 100px
+            </p>
+
+            <PartitionLayout
+                width="100%"
+                height={200}
+                subContentDefaultWidth="30%"
+                limit={{
+                    childrenMinWidth: 300,
+                    subContentMinWidth: 100,
+                }}
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-brand-light)",
+                            color: "var(--rp-c-text-1)",
+                            fontSize: "14px",
+                        }}
+                    >
+                        <div style={{ textAlign: "center" }}>
+                            <div style={{ marginBottom: "5px" }}>📋 子内容</div>
+                            <div
+                                style={{
+                                    fontSize: "12px",
+                                    color: "var(--rp-c-text-2)",
+                                }}
+                            >
+                                最小宽度: 100px
+                            </div>
+                        </div>
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                        fontSize: "14px",
+                    }}
+                >
+                    <div style={{ textAlign: "center" }}>
+                        <div style={{ marginBottom: "5px" }}>📄 主内容</div>
+                        <div
+                            style={{
+                                fontSize: "12px",
+                                color: "var(--rp-c-text-2)",
+                            }}
+                        >
+                            最小宽度: 300px
+                        </div>
+                    </div>
+                </div>
+            </PartitionLayout>
+        </div>
+    );
+};
+
+export default LimitDemo;
+```
+
+### 响应式布局 📐
+
+通过 `breakPoint` 属性设置响应式断点，在小屏幕下自动切换为堆叠模式。
+
+```tsx preview
+import React, { useState } from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const ResponsiveDemo: React.FC = () => {
+    const [containerWidth, setContainerWidth] = useState(800);
+
+    const updateWidth = (width: number) => {
+        setContainerWidth(width);
+    };
+
+    return (
+        <div>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>
+                    当前容器宽度: {containerWidth}px，断点: 600px
+                </p>
+                <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                    当宽度小于 600px 时，布局会切换为堆叠模式（子内容浮动覆盖）
+                </p>
+
+                <div
+                    style={{ display: "flex", gap: "10px", marginTop: "10px" }}
+                >
+                    <button
+                        onClick={() => updateWidth(800)}
+                        style={{
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            background:
+                                containerWidth === 800
+                                    ? "var(--rp-c-brand)"
+                                    : "var(--rp-c-bg-soft)",
+                            color:
+                                containerWidth === 800
+                                    ? "var(--rp-c-bg)"
+                                    : "var(--rp-c-text-1)",
+                        }}
+                    >
+                        大屏 (800px)
+                    </button>
+                    <button
+                        onClick={() => updateWidth(600)}
+                        style={{
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            background:
+                                containerWidth === 600
+                                    ? "var(--rp-c-brand)"
+                                    : "var(--rp-c-bg-soft)",
+                            color:
+                                containerWidth === 600
+                                    ? "var(--rp-c-bg)"
+                                    : "var(--rp-c-text-1)",
+                        }}
+                    >
+                        断点 (600px)
+                    </button>
+                    <button
+                        onClick={() => updateWidth(400)}
+                        style={{
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            background:
+                                containerWidth === 400
+                                    ? "var(--rp-c-brand)"
+                                    : "var(--rp-c-bg-soft)",
+                            color:
+                                containerWidth === 400
+                                    ? "var(--rp-c-bg)"
+                                    : "var(--rp-c-text-1)",
+                        }}
+                    >
+                        小屏 (400px)
+                    </button>
+                </div>
+            </div>
+
+            <div
+                style={{
+                    width: `${containerWidth}px`,
+                    margin: "0 auto",
+                    border: "1px solid var(--rp-c-border)",
+                    borderRadius: "4px",
+                    overflow: "hidden",
+                }}
+            >
+                <PartitionLayout
+                    width="100%"
+                    height={200}
+                    subContentDefaultWidth="35%"
+                    breakPoint={600}
+                    subContent={
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: "100%",
+                                height: "100%",
+                                background: "var(--rp-c-bg-soft)",
+                                color: "var(--rp-c-text-1)",
+                            }}
+                        >
+                            子内容
+                        </div>
+                    }
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-bg)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        主内容
+                    </div>
+                </PartitionLayout>
+            </div>
+        </div>
+    );
+};
+
+export default ResponsiveDemo;
+```
+
+### 自定义间距 🎨
+
+通过 `gap` 属性设置主内容和子内容之间的间距。
+
+```tsx preview
+import React from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const GapDemo: React.FC = () => {
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {/* 无间距 */}
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "12px",
+                }}
+            >
+                无间距 (gap: 0)
+            </div>
+            <PartitionLayout
+                width="100%"
+                height={150}
+                gap={0}
+                subContentDefaultWidth="30%"
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-brand-light)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        子内容
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    主内容
+                </div>
+            </PartitionLayout>
+
+            {/* 10px 间距 */}
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "12px",
+                }}
+            >
+                10px 间距
+            </div>
+            <PartitionLayout
+                width="100%"
+                height={150}
+                gap={10}
+                subContentDefaultWidth="30%"
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-brand-light)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        子内容
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    主内容
+                </div>
+            </PartitionLayout>
+
+            {/* 20px 间距 */}
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "12px",
+                }}
+            >
+                20px 间距
+            </div>
+            <PartitionLayout
+                width="100%"
+                height={150}
+                gap={20}
+                subContentDefaultWidth="30%"
+                subContent={
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "100%",
+                            height: "100%",
+                            background: "var(--rp-c-brand-light)",
+                            color: "var(--rp-c-text-1)",
+                        }}
+                    >
+                        子内容
+                    </div>
+                }
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                    }}
+                >
+                    主内容
+                </div>
+            </PartitionLayout>
+        </div>
+    );
+};
+
+export default GapDemo;
+```
+
+### 实际应用场景 🎯
+
+展示 PartitionLayout 组件在实际场景中的应用，如文件管理器、代码编辑器、数据面板等。
+
+```tsx preview
+import React, { useState } from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const ApplicationDemo: React.FC = () => {
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [showDetails, setShowDetails] = useState(false);
+
+    const files = [
+        { name: "index.tsx", type: "React Component", size: "2.5 KB" },
+        { name: "styles.css", type: "CSS Styles", size: "1.2 KB" },
+        { name: "utils.ts", type: "TypeScript", size: "3.8 KB" },
+        { name: "config.json", type: "JSON Config", size: "0.5 KB" },
+    ];
+
+    const handleFileClick = (file: any) => {
+        setSelectedFile(file.name);
+        setShowDetails(true);
+    };
+
+    const subContent = showDetails && (
+        <div
+            style={{
+                padding: "20px",
+                background: "var(--rp-c-bg)",
+                height: "100%",
+                overflow: "auto",
+            }}
+        >
+            <h3
+                style={{
+                    margin: "0 0 15px 0",
+                    color: "var(--rp-c-text-1)",
+                    fontSize: "18px",
+                }}
+            >
+                文件详情
+            </h3>
+            {selectedFile && (
+                <div style={{ color: "var(--rp-c-text-1)" }}>
+                    <div style={{ marginBottom: "10px" }}>
+                        <strong>文件名:</strong> {selectedFile}
+                    </div>
+                    <div style={{ marginBottom: "10px" }}>
+                        <strong>类型:</strong>{" "}
+                        {files.find((f) => f.name === selectedFile)?.type}
+                    </div>
+                    <div style={{ marginBottom: "10px" }}>
+                        <strong>大小:</strong>{" "}
+                        {files.find((f) => f.name === selectedFile)?.size}
+                    </div>
+                    <div style={{ marginBottom: "10px" }}>
+                        <strong>修改时间:</strong> 2024-01-15 10:30
+                    </div>
+                    <button
+                        onClick={() => setShowDetails(false)}
+                        style={{
+                            marginTop: "15px",
+                            padding: "8px 16px",
+                            borderRadius: "4px",
+                            background: "var(--rp-c-bg-soft)",
+                            color: "var(--rp-c-text-1)",
+                            cursor: "pointer",
+                        }}
+                    >
+                        关闭详情
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+
+    return (
+        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+            <div
+                style={{
+                    padding: "10px",
+                    background: "var(--rp-c-bg-soft)",
+                    borderRadius: "4px",
+                    marginBottom: "10px",
+                    color: "var(--rp-c-text-2)",
+                }}
+            >
+                <p style={{ margin: "5px 0" }}>文件管理器示例</p>
+                <p style={{ margin: "5px 0", fontSize: "12px" }}>
+                    点击文件查看详情，可以拖拽分隔线调整布局
+                </p>
+            </div>
+
+            <PartitionLayout
+                width="100%"
+                height={300}
+                subContentDefaultWidth="35%"
+                limit={{
+                    childrenMinWidth: 300,
+                    subContentMinWidth: 200,
+                }}
+                subContent={subContent}
+            >
+                <div
+                    style={{
+                        padding: "20px",
+                        background: "var(--rp-c-bg)",
+                        height: "100%",
+                        overflow: "auto",
+                    }}
+                >
+                    <h3
+                        style={{
+                            margin: "0 0 15px 0",
+                            color: "var(--rp-c-text-1)",
+                            fontSize: "18px",
+                        }}
+                    >
+                        文件列表
+                    </h3>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "10px",
+                        }}
+                    >
+                        {files.map((file, index) => (
+                            <div
+                                key={index}
+                                onClick={() => handleFileClick(file)}
+                                style={{
+                                    padding: "12px",
+                                    background:
+                                        selectedFile === file.name
+                                            ? "var(--rp-c-brand-light)"
+                                            : "var(--rp-c-bg-soft)",
+                                    borderRadius: "4px",
+                                    cursor: "pointer",
+                                    color: "var(--rp-c-text-1)",
+                                    transition: "background 0.2s ease",
+                                }}
+                            >
+                                <div style={{ fontWeight: "bold" }}>
+                                    {file.name}
+                                </div>
+                                <div
+                                    style={{
+                                        fontSize: "12px",
+                                        color: "var(--rp-c-text-2)",
+                                    }}
+                                >
+                                    {file.type} - {file.size}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </PartitionLayout>
+        </div>
+    );
+};
+
+export default ApplicationDemo;
+```
+
+## API 📚
+
+### PartitionLayoutProps ⚙️
+
+| 属性                   | 说明                 | 类型                                                         | 默认值 | 版本 |
+| ---------------------- | -------------------- | ------------------------------------------------------------ | ------ | ---- |
+| children               | 主内容               | `ReactNode`                                                  | -      | -    |
+| width                  | 布局宽度             | `CSSProperties["width"]`                                     | "100%" | -    |
+| height                 | 布局高度             | `CSSProperties["height"]`                                    | "100%" | -    |
+| gap                    | 主内容和子内容的间距 | `CSSProperties["gap"]`                                       | 0      | -    |
+| subContent             | 子内容               | `ReactNode`                                                  | -      | -    |
+| subContentDefaultWidth | 子内容默认宽度       | `CSSProperties["width"]`                                     | "30%"  | -    |
+| limit                  | 宽度限制             | `{ childrenMinWidth?: number; subContentMinWidth?: number }` | -      | -    |
+| breakPoint             | 响应式断点           | `number`                                                     | 0      | -    |
+| className              | 自定义类名           | `string`                                                     | -      | -    |
+| style                  | 自定义样式           | `React.CSSProperties`                                        | -      | -    |
+| draglineClassName      | 分隔线自定义类名     | `string`                                                     | -      | -    |
+
+### limit 类型定义
+
+```typescript
+type Limit = {
+    childrenMinWidth?: number; // 主内容最小宽度（像素）
+    subContentMinWidth?: number; // 子内容最小宽度（像素）
+};
+```
+
+**说明**：
+
+- `limit` 用于限制主内容和子内容的最小宽度
+- 当拖拽分隔线时，宽度会被限制在设定的最小值范围内
+- 防止分区过小或过大，影响用户体验
+
+## 特性说明 🎯
+
+### 动态分区布局
+
+PartitionLayout 提供动态分区布局：
+
+- 主内容自动占据剩余空间（使用 `flex: 1`）
+- 子内容可以设置固定宽度或百分比宽度
+- 通过拖拽分隔线动态调整分区比例
+
+### 可拖拽分隔线
+
+分隔线特性：
+
+- 分隔线宽度为 4px，带有悬停效果
+- 悬停时显示浅灰色背景，提示可拖拽
+- 拖拽时平滑调整宽度，实时响应
+- 使用 `useMouseDragOffset` 钩子实现拖拽逻辑
+
+### 响应式布局模式
+
+支持两种布局模式：
+
+- **normal 模式**：正常分区布局，主内容和子内容并排显示
+- **stack 模式**：堆叠模式，子内容浮动覆盖在主内容上方
+
+**切换条件**：
+
+- 当容器宽度小于 `breakPoint` 时，切换为 `stack` 模式
+- 在 `stack` 模式下，分隔线会隐藏，子内容占满整个容器
+
+### 宽度计算逻辑
+
+宽度调整逻辑：
+
+- 支持百分比宽度（如 `"30%"`）和像素宽度（如 `"200px"`）
+- 拖拽时自动转换为像素进行计算
+- 根据容器宽度和限制条件计算安全的宽度值
+- 最终转换回百分比或保留像素值
+
+### CSS Flexbox 布局
+
+使用 Flexbox 实现布局：
+
+- 主内容使用 `flex: 1`，自动占据剩余空间
+- 子内容使用固定宽度，不参与 flex 计算
+- 分隔线不占用 flex 空间，独立存在
+
+## 注意事项 ⚠️
+
+1. **子内容显示** 📏：
+    - 当 `subContent` 为 `null` 或 `undefined` 时，子内容不显示
+    - 分隔线只在子内容存在时显示
+    - 可以通过动态设置 `subContent` 实现显示/隐藏功能
+
+2. **宽度设置建议** 🎨：
+    - 百分比宽度：适合响应式布局，如 `"30%"`、`"40%"`
+    - 像素宽度：适合固定布局，如 `"200px"`、`"300px"`
+    - 建议根据实际需求选择合适的宽度类型
+
+3. **宽度限制设置** ⚡：
+    - `childrenMinWidth`：防止主内容过小，影响内容展示
+    - `subContentMinWidth`：防止子内容过小，影响功能使用
+    - 建议根据内容类型设置合理的最小宽度
+
+4. **响应式断点设置** 📐：
+    - 断点值建议根据实际内容和设备设置
+    - 常见断点：600px（移动端）、768px（平板）、1024px（桌面）
+    - 在断点以下，子内容会浮动覆盖主内容
+
+5. **间距设置** 🎨：
+    - 间距会影响分隔线的显示位置
+    - 建议在小间距（0-10px）时使用
+    - 大间距可能导致分隔线位置不明显
+
+6. **拖拽性能** 💾：
+    - 使用 CSS `transition` 实现平滑过渡
+    - 拖拽时禁用 transition，避免性能问题
+    - 拖拽结束后恢复 transition，实现平滑效果
+
+7. **布局模式切换** 📱：
+    - 在 `stack` 模式下，分隔线会隐藏
+    - 子内容浮动覆盖主内容，占满整个容器
+    - 建议在子内容添加关闭按钮，方便用户关闭
+
+## 最佳实践 💡
+
+1. **分区比例选择**：
+    - 文件管理器：建议 70% 主内容 + 30% 子内容
+    - 代码编辑器：建议 60% 主内容 + 40% 子内容
+    - 数据面板：建议 50% 主内容 + 50% 子内容
+
+2. **宽度限制设置**：
+    - 主内容：根据内容类型设置，文本内容建议 ≥300px
+    - 子内容：根据功能需求设置，详情面板建议 ≥200px
+    - 防止过小：避免内容无法正常展示或功能无法使用
+
+3. **响应式断点**：
+    - 移动优先：建议设置 600px 断点
+    - 内容优先：根据实际内容宽度设置断点
+    - 测试验证：在不同设备上测试布局效果
+
+4. **动态显示子内容**：
+    - 条件渲染：使用条件判断动态设置 `subContent`
+    - 状态管理：使用 `useState` 管理显示/隐藏状态
+    - 关闭功能：在子内容添加关闭按钮或操作
+
+5. **使用场景**：
+    - 文件管理器：文件列表 + 文件详情
+    - 代码编辑器：代码面板 + 输出面板
+    - 数据分析：数据表格 + 数据图表
+    - 邮件客户端：邮件列表 + 邮件详情
+
+6. **设计平衡**：
+    - 避免过度分区，保持布局简洁
+    - 合理设置宽度比例，确保内容可读性
+    - 提供拖拽功能，增强用户控制力
+    - 考虑响应式设计，适配不同设备
+
+7. **性能优化**：
+    - 避免在拖拽时频繁更新复杂内容
+    - 使用 CSS transition 实现平滑效果
+    - 限制拖拽频率，避免性能问题
+    - 在堆叠模式下减少不必要的渲染
