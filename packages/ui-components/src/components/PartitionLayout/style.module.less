@@ -1,0 +1,40 @@
+.partition-layout {
+    display: flex;
+
+    .partition-layout-content {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .partition-layout-sub-content {
+        overflow: hidden;
+        transition: width 0.2s ease-in-out;
+
+        &.dragging {
+            transition: none;
+        }
+    }
+
+    .partition-layout-drag-line {
+        padding: 0 2px;
+        cursor: move;
+
+        &::after {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 100%;
+            background-color: transparent;
+            border-radius: 2px;
+
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        &:hover,
+        &.dragging {
+            &::after {
+                background-color: #e5e5e5;
+            }
+        }
+    }
+}

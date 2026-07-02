@@ -1,0 +1,48 @@
+# PartitionLayout 分区布局组件
+
+PartitionLayout 是一个组件，用于为容器添加炫酷的分区布局效果。 ✨
+
+## 代码演示
+
+### 基本用法
+
+```tsx preview
+import React, { useState } from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const BasicDemo: React.FC = () => {
+    const [subContent, setSubContent] = useState(null);
+
+    const onClick = () => {
+        setSubContent(
+            <div
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "1px dashed var(--rp-c-brand)",
+                }}
+            >
+                <span>详情</span>
+                <button onClick={() => setSubContent(null)}>关闭</button>
+            </div>,
+        );
+    };
+
+    return (
+        <PartitionLayout width={"100%"} height={300} subContent={subContent}>
+            <div
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    border: "1px dashed var(--rp-c-brand)",
+                }}
+            >
+                <div>内容</div>
+                <button onClick={onClick}>查看详情</button>
+            </div>
+        </PartitionLayout>
+    );
+};
+
+export default BasicDemo;
+```
