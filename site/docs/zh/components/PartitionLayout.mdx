@@ -86,123 +86,85 @@ export default BasicDemo;
 
 ### 自定义分区比例 📏
 
-通过 `subContentDefaultWidth` 属性设置子内容的默认宽度，实现不同的分区比例。
+通过 `subContentDefaultWidth` 属性设置子内容的默认宽度，实现不同的分区比例。点击按钮动态显示子内容。
 
 ```tsx preview
 import React, { useState } from "react";
 import { PartitionLayout } from "@mmjg/ui-components";
 
 const RatioDemo: React.FC = () => {
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* 30% 子内容 */}
-            <PartitionLayout
-                width="100%"
-                height={150}
-                subContentDefaultWidth="30%"
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-bg-soft)",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        子内容 (30%)
-                    </div>
-                }
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        background: "var(--rp-c-bg)",
-                        color: "var(--rp-c-text-1)",
-                    }}
-                >
-                    主内容 (70%)
-                </div>
-            </PartitionLayout>
+    const [showSubContent, setShowSubContent] = useState(false);
 
-            {/* 40% 子内容 */}
-            <PartitionLayout
-                width="100%"
-                height={150}
-                subContentDefaultWidth="40%"
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-bg-soft)",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        子内容 (40%)
-                    </div>
-                }
+    const subContent = showSubContent && (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                background: "var(--rp-c-bg-soft)",
+                color: "var(--rp-c-text-1)",
+                gap: "10px",
+            }}
+        >
+            <div>子内容 (默认40%宽度)</div>
+            <div style={{ fontSize: "12px", color: "var(--rp-c-text-2)" }}>
+                可以拖拽分隔线调整宽度
+            </div>
+            <button
+                onClick={() => setShowSubContent(false)}
+                style={{
+                    padding: "6px 12px",
+                    borderRadius: "4px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                    cursor: "pointer",
+                }}
             >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        background: "var(--rp-c-bg)",
-                        color: "var(--rp-c-text-1)",
-                    }}
-                >
-                    主内容 (60%)
-                </div>
-            </PartitionLayout>
-
-            {/* 固定宽度子内容 */}
-            <PartitionLayout
-                width="100%"
-                height={150}
-                subContentDefaultWidth="200px"
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-bg-soft)",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        子内容 (200px)
-                    </div>
-                }
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        background: "var(--rp-c-bg)",
-                        color: "var(--rp-c-text-1)",
-                    }}
-                >
-                    主内容 (自适应)
-                </div>
-            </PartitionLayout>
+                关闭
+            </button>
         </div>
+    );
+
+    return (
+        <PartitionLayout
+            width="100%"
+            height={200}
+            subContentDefaultWidth="40%"
+            subContent={subContent}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    height: "100%",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                    gap: "10px",
+                }}
+            >
+                <div>主内容区域</div>
+                {!showSubContent && (
+                    <button
+                        onClick={() => setShowSubContent(true)}
+                        style={{
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            background: "var(--rp-c-brand)",
+                            color: "var(--rp-c-bg)",
+                            cursor: "pointer",
+                        }}
+                    >
+                        打开详情面板
+                    </button>
+                )}
+            </div>
+        </PartitionLayout>
     );
 };
 
@@ -211,25 +173,70 @@ export default RatioDemo;
 
 ### 宽度限制设置 ⚡
 
-通过 `limit` 属性设置最小宽度限制，防止分区过小或过大。
+通过 `limit` 属性设置最小宽度限制，防止分区过小或过大。点击按钮动态显示子内容。
 
 ```tsx preview
-import React from "react";
+import React, { useState } from "react";
 import { PartitionLayout } from "@mmjg/ui-components";
 
 const LimitDemo: React.FC = () => {
+    const [showSubContent, setShowSubContent] = useState(false);
+
+    const subContent = showSubContent && (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                background: "var(--rp-c-bg-soft)",
+                color: "var(--rp-c-text-1)",
+                gap: "10px",
+            }}
+        >
+            <div style={{ textAlign: "center" }}>
+                <div style={{ marginBottom: "5px" }}>📋 详情面板</div>
+                <div style={{ fontSize: "12px", color: "var(--rp-c-text-2)" }}>
+                    最小宽度: 100px
+                </div>
+                <div
+                    style={{
+                        fontSize: "12px",
+                        color: "var(--rp-c-text-2)",
+                        marginTop: "5px",
+                    }}
+                >
+                    尝试拖拽分隔线，观察限制效果
+                </div>
+            </div>
+            <button
+                onClick={() => setShowSubContent(false)}
+                style={{
+                    padding: "6px 12px",
+                    borderRadius: "4px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                    cursor: "pointer",
+                }}
+            >
+                关闭
+            </button>
+        </div>
+    );
+
     return (
         <div
             style={{
                 padding: "10px",
                 background: "var(--rp-c-bg-soft)",
                 borderRadius: "4px",
-                marginBottom: "10px",
                 color: "var(--rp-c-text-2)",
+                fontSize: "12px",
             }}
         >
-            <p style={{ margin: "5px 0" }}>尝试拖拽分隔线，观察宽度限制效果</p>
-            <p style={{ margin: "5px 0", fontSize: "12px" }}>
+            <p style={{ margin: "5px 0" }}>
                 主内容最小宽度: 300px，子内容最小宽度: 100px
             </p>
 
@@ -241,47 +248,23 @@ const LimitDemo: React.FC = () => {
                     childrenMinWidth: 300,
                     subContentMinWidth: 100,
                 }}
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-brand-light)",
-                            color: "var(--rp-c-text-1)",
-                            fontSize: "14px",
-                        }}
-                    >
-                        <div style={{ textAlign: "center" }}>
-                            <div style={{ marginBottom: "5px" }}>📋 子内容</div>
-                            <div
-                                style={{
-                                    fontSize: "12px",
-                                    color: "var(--rp-c-text-2)",
-                                }}
-                            >
-                                最小宽度: 100px
-                            </div>
-                        </div>
-                    </div>
-                }
+                subContent={subContent}
             >
                 <div
                     style={{
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
                         width: "100%",
                         height: "100%",
                         background: "var(--rp-c-bg)",
                         color: "var(--rp-c-text-1)",
-                        fontSize: "14px",
+                        gap: "10px",
                     }}
                 >
                     <div style={{ textAlign: "center" }}>
-                        <div style={{ marginBottom: "5px" }}>📄 主内容</div>
+                        <div style={{ marginBottom: "5px" }}>📄 主内容区域</div>
                         <div
                             style={{
                                 fontSize: "12px",
@@ -291,6 +274,20 @@ const LimitDemo: React.FC = () => {
                             最小宽度: 300px
                         </div>
                     </div>
+                    {!showSubContent && (
+                        <button
+                            onClick={() => setShowSubContent(true)}
+                            style={{
+                                padding: "6px 12px",
+                                borderRadius: "4px",
+                                background: "var(--rp-c-brand)",
+                                color: "var(--rp-c-bg)",
+                                cursor: "pointer",
+                            }}
+                        >
+                            打开详情
+                        </button>
+                    )}
                 </div>
             </PartitionLayout>
         </div>
@@ -302,18 +299,54 @@ export default LimitDemo;
 
 ### 响应式布局 📐
 
-通过 `breakPoint` 属性设置响应式断点，在小屏幕下自动切换为堆叠模式。
+通过 `breakPoint` 属性设置响应式断点，在小屏幕下自动切换为堆叠模式。点击按钮动态显示子内容。
 
 ```tsx preview
 import React, { useState } from "react";
 import { PartitionLayout } from "@mmjg/ui-components";
 
 const ResponsiveDemo: React.FC = () => {
-    const [containerWidth, setContainerWidth] = useState(800);
+    const [containerWidth, setContainerWidth] = useState(400);
+    const [showSubContent, setShowSubContent] = useState(false);
 
     const updateWidth = (width: number) => {
         setContainerWidth(width);
     };
+
+    const subContent = showSubContent && (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                background: "var(--rp-c-bg-soft)",
+                color: "var(--rp-c-text-1)",
+                gap: "10px",
+            }}
+        >
+            <div>详情面板</div>
+            <div style={{ fontSize: "12px", color: "var(--rp-c-text-2)" }}>
+                {containerWidth < 300
+                    ? "小屏模式：浮动覆盖主内容"
+                    : "正常模式：拖拽分隔线调整宽度"}
+            </div>
+            <button
+                onClick={() => setShowSubContent(false)}
+                style={{
+                    padding: "6px 12px",
+                    borderRadius: "4px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                    cursor: "pointer",
+                }}
+            >
+                关闭
+            </button>
+        </div>
+    );
 
     return (
         <div>
@@ -327,49 +360,15 @@ const ResponsiveDemo: React.FC = () => {
                 }}
             >
                 <p style={{ margin: "5px 0" }}>
-                    当前容器宽度: {containerWidth}px，断点: 600px
+                    当前容器宽度: {containerWidth}px，断点: 300px
                 </p>
                 <p style={{ margin: "5px 0", fontSize: "12px" }}>
-                    当宽度小于 600px 时，布局会切换为堆叠模式（子内容浮动覆盖）
+                    当宽度小于 300px 时，子内容会浮动覆盖主内容（stack 模式）
                 </p>
 
                 <div
                     style={{ display: "flex", gap: "10px", marginTop: "10px" }}
                 >
-                    <button
-                        onClick={() => updateWidth(800)}
-                        style={{
-                            padding: "6px 12px",
-                            borderRadius: "4px",
-                            background:
-                                containerWidth === 800
-                                    ? "var(--rp-c-brand)"
-                                    : "var(--rp-c-bg-soft)",
-                            color:
-                                containerWidth === 800
-                                    ? "var(--rp-c-bg)"
-                                    : "var(--rp-c-text-1)",
-                        }}
-                    >
-                        大屏 (800px)
-                    </button>
-                    <button
-                        onClick={() => updateWidth(600)}
-                        style={{
-                            padding: "6px 12px",
-                            borderRadius: "4px",
-                            background:
-                                containerWidth === 600
-                                    ? "var(--rp-c-brand)"
-                                    : "var(--rp-c-bg-soft)",
-                            color:
-                                containerWidth === 600
-                                    ? "var(--rp-c-bg)"
-                                    : "var(--rp-c-text-1)",
-                        }}
-                    >
-                        断点 (600px)
-                    </button>
                     <button
                         onClick={() => updateWidth(400)}
                         style={{
@@ -385,7 +384,25 @@ const ResponsiveDemo: React.FC = () => {
                                     : "var(--rp-c-text-1)",
                         }}
                     >
-                        小屏 (400px)
+                        大屏 (400px)
+                    </button>
+                    <button
+                        onClick={() => updateWidth(200)}
+                        style={{
+                            cursor: "pointer",
+                            padding: "6px 12px",
+                            borderRadius: "4px",
+                            background:
+                                containerWidth === 200
+                                    ? "var(--rp-c-brand)"
+                                    : "var(--rp-c-bg-soft)",
+                            color:
+                                containerWidth === 200
+                                    ? "var(--rp-c-bg)"
+                                    : "var(--rp-c-text-1)",
+                        }}
+                    >
+                        小屏 (200px)
                     </button>
                 </div>
             </div>
@@ -403,35 +420,38 @@ const ResponsiveDemo: React.FC = () => {
                     width="100%"
                     height={200}
                     subContentDefaultWidth="35%"
-                    breakPoint={600}
-                    subContent={
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                width: "100%",
-                                height: "100%",
-                                background: "var(--rp-c-bg-soft)",
-                                color: "var(--rp-c-text-1)",
-                            }}
-                        >
-                            子内容
-                        </div>
-                    }
+                    breakPoint={300}
+                    subContent={subContent}
                 >
                     <div
                         style={{
                             display: "flex",
+                            flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
                             width: "100%",
                             height: "100%",
+                            border: "1px dashed var(--rp-c-brand)",
                             background: "var(--rp-c-bg)",
                             color: "var(--rp-c-text-1)",
+                            gap: "10px",
                         }}
                     >
-                        主内容
+                        <div>主内容区域</div>
+                        {!showSubContent && (
+                            <button
+                                onClick={() => setShowSubContent(true)}
+                                style={{
+                                    padding: "6px 12px",
+                                    borderRadius: "4px",
+                                    background: "var(--rp-c-brand)",
+                                    color: "var(--rp-c-bg)",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                打开详情
+                            </button>
+                        )}
                     </div>
                 </PartitionLayout>
             </div>
@@ -444,156 +464,95 @@ export default ResponsiveDemo;
 
 ### 自定义间距 🎨
 
-通过 `gap` 属性设置主内容和子内容之间的间距。
+通过 `gap` 属性设置主内容和子内容之间的间距。点击按钮动态显示子内容。
 
 ```tsx preview
-import React from "react";
+import React, { useState } from "react";
 import { PartitionLayout } from "@mmjg/ui-components";
 
 const GapDemo: React.FC = () => {
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {/* 无间距 */}
-            <div
-                style={{
-                    padding: "10px",
-                    background: "var(--rp-c-bg-soft)",
-                    borderRadius: "4px",
-                    color: "var(--rp-c-text-2)",
-                    fontSize: "12px",
-                }}
-            >
-                无间距 (gap: 0)
-            </div>
-            <PartitionLayout
-                width="100%"
-                height={150}
-                gap={0}
-                subContentDefaultWidth="30%"
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-brand-light)",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        子内容
-                    </div>
-                }
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        background: "var(--rp-c-bg)",
-                        color: "var(--rp-c-text-1)",
-                    }}
-                >
-                    主内容
-                </div>
-            </PartitionLayout>
+    const [showSubContent, setShowSubContent] = useState(false);
 
-            {/* 10px 间距 */}
-            <div
+    const subContent = showSubContent && (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                background: "var(--rp-c-bg-soft)",
+                color: "var(--rp-c-text-1)",
+                gap: "10px",
+            }}
+        >
+            <div>详情面板</div>
+            <div style={{ fontSize: "12px", color: "var(--rp-c-text-2)" }}>
+                设置了10px间距
+            </div>
+            <button
+                onClick={() => setShowSubContent(false)}
                 style={{
-                    padding: "10px",
-                    background: "var(--rp-c-bg-soft)",
+                    padding: "6px 12px",
                     borderRadius: "4px",
-                    color: "var(--rp-c-text-2)",
-                    fontSize: "12px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                    cursor: "pointer",
                 }}
             >
-                10px 间距
-            </div>
+                关闭
+            </button>
+        </div>
+    );
+
+    return (
+        <div
+            style={{
+                padding: "10px",
+                background: "var(--rp-c-bg-soft)",
+                borderRadius: "4px",
+                color: "var(--rp-c-text-2)",
+                fontSize: "12px",
+            }}
+        >
+            <p style={{ margin: "5px 0" }}>间距设置: 10px</p>
+
             <PartitionLayout
                 width="100%"
-                height={150}
+                height={200}
                 gap={10}
                 subContentDefaultWidth="30%"
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-brand-light)",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        子内容
-                    </div>
-                }
+                subContent={subContent}
             >
                 <div
                     style={{
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
                         width: "100%",
                         height: "100%",
                         background: "var(--rp-c-bg)",
                         color: "var(--rp-c-text-1)",
+                        gap: "10px",
                     }}
                 >
-                    主内容
-                </div>
-            </PartitionLayout>
-
-            {/* 20px 间距 */}
-            <div
-                style={{
-                    padding: "10px",
-                    background: "var(--rp-c-bg-soft)",
-                    borderRadius: "4px",
-                    color: "var(--rp-c-text-2)",
-                    fontSize: "12px",
-                }}
-            >
-                20px 间距
-            </div>
-            <PartitionLayout
-                width="100%"
-                height={150}
-                gap={20}
-                subContentDefaultWidth="30%"
-                subContent={
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            width: "100%",
-                            height: "100%",
-                            background: "var(--rp-c-brand-light)",
-                            color: "var(--rp-c-text-1)",
-                        }}
-                    >
-                        子内容
-                    </div>
-                }
-            >
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        width: "100%",
-                        height: "100%",
-                        background: "var(--rp-c-bg)",
-                        color: "var(--rp-c-text-1)",
-                    }}
-                >
-                    主内容
+                    <div>主内容区域</div>
+                    {!showSubContent && (
+                        <button
+                            onClick={() => setShowSubContent(true)}
+                            style={{
+                                padding: "6px 12px",
+                                borderRadius: "4px",
+                                background: "var(--rp-c-brand)",
+                                color: "var(--rp-c-bg)",
+                                cursor: "pointer",
+                            }}
+                        >
+                            打开详情
+                        </button>
+                    )}
                 </div>
             </PartitionLayout>
         </div>
@@ -601,6 +560,126 @@ const GapDemo: React.FC = () => {
 };
 
 export default GapDemo;
+```
+
+### 自定义拖拽线样式 ✏️
+
+通过 `draglineClassName` 属性自定义拖拽线的样式。点击按钮动态显示子内容。
+
+```tsx preview
+import React, { useState } from "react";
+import { PartitionLayout } from "@mmjg/ui-components";
+
+const CustomDraglineDemo: React.FC = () => {
+    const [showSubContent, setShowSubContent] = useState(false);
+
+    const subContent = showSubContent && (
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                background: "var(--rp-c-bg-soft)",
+                color: "var(--rp-c-text-1)",
+                gap: "10px",
+            }}
+        >
+            <div>详情面板</div>
+            <div style={{ fontSize: "12px", color: "var(--rp-c-text-2)" }}>
+                观察分隔线的自定义样式
+            </div>
+            <button
+                onClick={() => setShowSubContent(false)}
+                style={{
+                    padding: "6px 12px",
+                    borderRadius: "4px",
+                    background: "var(--rp-c-bg)",
+                    color: "var(--rp-c-text-1)",
+                    cursor: "pointer",
+                }}
+            >
+                关闭
+            </button>
+        </div>
+    );
+
+    return (
+        <div
+            style={{
+                padding: "10px",
+                background: "var(--rp-c-bg-soft)",
+                borderRadius: "4px",
+                color: "var(--rp-c-text-2)",
+                fontSize: "12px",
+            }}
+        >
+            <p style={{ margin: "5px 0" }}>
+                自定义拖拽线样式：蓝色分隔线，悬停时变为深蓝色
+            </p>
+
+            <PartitionLayout
+                width="100%"
+                height={200}
+                subContentDefaultWidth="35%"
+                draglineClassName="custom-dragline"
+                subContent={subContent}
+                style={
+                    {
+                        // 添加自定义 CSS（在实际项目中应该使用 CSS 文件）
+                        "--custom-dragline-color": "var(--rp-c-brand-light)",
+                        "--custom-dragline-hover-color": "var(--rp-c-brand)",
+                    } as any
+                }
+            >
+                <style>
+                    {`
+                        .custom-dragline::after {
+                            background-color: var(--custom-dragline-color) !important;
+                        }
+                        .custom-dragline:hover::after,
+                        .custom-dragline.dragging::after {
+                            background-color: var(--custom-dragline-hover-color) !important;
+                        }
+                    `}
+                </style>
+                <div
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        background: "var(--rp-c-bg)",
+                        color: "var(--rp-c-text-1)",
+                        gap: "10px",
+                    }}
+                >
+                    <div>主内容区域</div>
+                    {!showSubContent && (
+                        <button
+                            onClick={() => setShowSubContent(true)}
+                            style={{
+                                padding: "6px 12px",
+                                borderRadius: "4px",
+                                background: "var(--rp-c-brand)",
+                                color: "var(--rp-c-bg)",
+                                cursor: "pointer",
+                            }}
+                        >
+                            打开详情
+                        </button>
+                    )}
+                </div>
+            </PartitionLayout>
+        </div>
+    );
+};
+
+export default CustomDraglineDemo;
 ```
 
 ### 实际应用场景 🎯
@@ -796,11 +875,13 @@ type Limit = {
 };
 ```
 
-**说明**：
+:::tip
 
 - `limit` 用于限制主内容和子内容的最小宽度
 - 当拖拽分隔线时，宽度会被限制在设定的最小值范围内
 - 防止分区过小或过大，影响用户体验
+
+:::
 
 ## 特性说明 🎯
 
