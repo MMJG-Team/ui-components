@@ -3,3 +3,4 @@ export * from './Menu3D';
 export * from './Shimmer';
 export * from './BorderEffect';
 export * from './PartitionLayout';
+export * from './Cube';

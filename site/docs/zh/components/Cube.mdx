@@ -1,0 +1,471 @@
+# Cube 立方体
+
+Cube 是一个3D旋转立方体组件，用于展示炫酷的3D视觉效果。 ✨
+
+:::tip 特性
+
+- **自动旋转** 🔍：立方体自动旋转动画，持续展示3D效果
+- **自定义尺寸** 📏：支持自定义立方体大小，适配不同展示场景
+- **自定义渲染** ⚡：支持自定义渲染每个面，实现丰富的内容展示
+- **6个面** 📐：立方体包含前、后、左、右、上、下6个面
+- **3D效果** 🎨：使用CSS 3D变换，实现真实的立方体视觉效果
+
+:::
+
+## 代码演示
+
+### 基本用法
+
+```tsx preview
+import React from "react";
+import { Cube } from "@mmjg/ui-components";
+
+const BasicDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+            }}
+        >
+            <Cube />
+        </div>
+    );
+};
+
+export default BasicDemo;
+```
+
+### 自定义尺寸 📏
+
+通过 `size` 属性设置立方体的尺寸，实现控制立方体的大小。
+
+```tsx preview
+import React from "react";
+import { Cube } from "@mmjg/ui-components";
+
+const SizeDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+            }}
+        >
+            <Cube size={150} />
+        </div>
+    );
+};
+
+export default SizeDemo;
+```
+
+### 自定义渲染面 ⚡
+
+通过 `customRenderFace` 属性自定义每个面的内容，实现丰富的展示效果。
+
+```tsx preview
+import React from "react";
+import { Cube } from "@mmjg/ui-components";
+
+const GradientDemo: React.FC = () => {
+    const customRenderFace = (face: string) => {
+        const gradients: Record<string, string> = {
+            front: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            back: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+            left: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+            right: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+            top: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+            bottom: "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+        };
+
+        return (
+            <div
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    background:
+                        gradients[face] ||
+                        "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "white",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                    textShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
+                }}
+            >
+                {face.toUpperCase()}
+            </div>
+        );
+    };
+
+    return (
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                padding: "20px",
+                background: "var(--rp-c-bg-soft)",
+                borderRadius: "4px",
+            }}
+        >
+            <Cube size={140} customRenderFace={customRenderFace} />
+        </div>
+    );
+};
+
+export default GradientDemo;
+```
+
+### 关闭自动旋转 🔄
+
+通过 `autoRotate` 属性控制是否开启自动旋转动画，默认为 `true`。
+
+```tsx preview
+import React from "react";
+import { Cube } from "@mmjg/ui-components";
+
+const NoRotateDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                textAlign: "center",
+                padding: "20px",
+                background: "var(--rp-c-bg)",
+            }}
+        >
+            <h3
+                style={{
+                    margin: "0 0 15px 0",
+                    color: "var(--rp-c-text-1)",
+                    fontSize: "18px",
+                }}
+            >
+                静态立方体（关闭自动旋转）
+            </h3>
+            <div
+                style={{
+                    display: "flex",
+                    gap: "30px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                {/* 自动旋转 */}
+                <div>
+                    <Cube autoRotate={true} size={100} />
+                    <div
+                        style={{
+                            marginTop: "15px",
+                            color: "var(--rp-c-text-2)",
+                            fontSize: "12px",
+                        }}
+                    >
+                        自动旋转 ✅
+                    </div>
+                </div>
+
+                {/* 关闭自动旋转 */}
+                <div>
+                    <style>
+                        {`
+                            .rotate {
+                                transform: rotateX(-20deg) rotateY(20deg);
+                            }
+                        `}
+                    </style>
+                    <Cube
+                        rotateClassName="rotate"
+                        autoRotate={false}
+                        size={100}
+                    />
+                    <div
+                        style={{
+                            marginTop: "15px",
+                            color: "var(--rp-c-text-2)",
+                            fontSize: "12px",
+                        }}
+                    >
+                        静止状态 ❌
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default NoRotateDemo;
+```
+
+### 自定义旋转动画 ⚡
+
+通过 `rotateClassName` 属性自定义旋转动画，实现不同的旋转效果。
+
+```tsx preview
+import React from "react";
+import { Cube } from "@mmjg/ui-components";
+
+const CustomRotateDemo: React.FC = () => {
+    return (
+        <div
+            style={{
+                textAlign: "center",
+                padding: "20px",
+                background: "var(--rp-c-bg)",
+            }}
+        >
+            <h3
+                style={{
+                    margin: "0 0 15px 0",
+                    color: "var(--rp-c-text-1)",
+                    fontSize: "18px",
+                }}
+            >
+                自定义旋转动画
+            </h3>
+
+            <div
+                style={{
+                    display: "flex",
+                    gap: "30px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                {/* 快速旋转 */}
+                <div>
+                    <style>
+                        {`
+                            .fast-rotate {
+                                animation: rotate-fast 3s linear infinite !important;
+                            }
+                            @keyframes rotate-fast {
+                                0% { transform: rotateX(-20deg) rotateY(0deg); }
+                                100% { transform: rotateX(-20deg) rotateY(360deg); }
+                            }
+                        `}
+                    </style>
+                    <Cube
+                        rotateClassName="fast-rotate"
+                        autoRotate={false}
+                        size={100}
+                    />
+                    <div
+                        style={{
+                            marginTop: "15px",
+                            color: "var(--rp-c-text-2)",
+                            fontSize: "12px",
+                        }}
+                    >
+                        快速旋转 (3秒)
+                    </div>
+                </div>
+
+                {/* 缓慢旋转 */}
+                <div>
+                    <style>
+                        {`
+                            .slow-rotate {
+                                animation: rotate-slow 20s linear infinite !important;
+                            }
+                            @keyframes rotate-slow {
+                                0% { transform: rotateX(-20deg) rotateY(0deg); }
+                                100% { transform: rotateX(-20deg) rotateY(360deg); }
+                            }
+                        `}
+                    </style>
+                    <Cube
+                        rotateClassName="slow-rotate"
+                        autoRotate={false}
+                        size={100}
+                    />
+                    <div
+                        style={{
+                            marginTop: "15px",
+                            color: "var(--rp-c-text-2)",
+                            fontSize: "12px",
+                        }}
+                    >
+                        缓慢旋转 (20秒)
+                    </div>
+                </div>
+
+                {/* 不同角度旋转 */}
+                <div>
+                    <style>
+                        {`
+                            .angle-rotate {
+                                animation: rotate-angle 8s linear infinite !important;
+                            }
+                            @keyframes rotate-angle {
+                                0% { transform: rotateX(0deg) rotateY(0deg); }
+                                100% { transform: rotateX(360deg) rotateY(360deg); }
+                            }
+                        `}
+                    </style>
+                    <Cube
+                        rotateClassName="angle-rotate"
+                        autoRotate={false}
+                        size={100}
+                    />
+                    <div
+                        style={{
+                            marginTop: "15px",
+                            color: "var(--rp-c-text-2)",
+                            fontSize: "12px",
+                        }}
+                    >
+                        全角度旋转
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default CustomRotateDemo;
+```
+
+### 实际应用场景 🎯
+
+展示 Cube 组件在实际场景中的应用，如技术栈展示、产品特性展示等。
+
+```tsx preview
+import React from "react";
+import { Cube } from "@mmjg/ui-components";
+
+const ApplicationDemo: React.FC = () => {
+    const customRenderFace = (face: string) => {
+        const techStack: Record<
+            string,
+            { tech: string; version: string; color: string }
+        > = {
+            front: { tech: "React", version: "18.2", color: "#61dafb" },
+            back: { tech: "Node.js", version: "18.x", color: "#68a063" },
+            left: { tech: "TypeScript", version: "5.0", color: "#3178c6" },
+            right: { tech: "GraphQL", version: "16.x", color: "#e535ab" },
+            top: { tech: "Docker", version: "24.x", color: "#2496ed" },
+            bottom: { tech: "K8s", version: "1.28", color: "#326ce5" },
+        };
+
+        const tech = techStack[face] || {
+            tech: "Tech",
+            version: "1.0",
+            color: "var(--rp-c-bg-soft)",
+        };
+
+        return (
+            <div
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: tech.color,
+                    color: "white",
+                    padding: "10px",
+                    boxShadow: "inset 0 0 20px rgba(0, 0, 0, 0.2)",
+                    borderRadius: "12px",
+                }}
+            >
+                <div
+                    style={{
+                        fontSize: "32px",
+                        fontWeight: "bold",
+                        marginBottom: "8px",
+                        textAlign: "center",
+                    }}
+                >
+                    {tech.tech}
+                </div>
+                <div
+                    style={{
+                        fontSize: "14px",
+                        opacity: 0.8,
+                    }}
+                >
+                    v{tech.version}
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <div
+            style={{
+                textAlign: "center",
+                padding: "20px",
+                background: "var(--rp-c-bg)",
+            }}
+        >
+            <h3
+                style={{
+                    margin: "0 0 20px 0",
+                    color: "var(--rp-c-text-1)",
+                    fontSize: "20px",
+                }}
+            >
+                技术栈展示
+            </h3>
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "20px",
+                }}
+            >
+                <Cube size={180} customRenderFace={customRenderFace} />
+            </div>
+            <p
+                style={{
+                    margin: 0,
+                    color: "var(--rp-c-text-2)",
+                    fontSize: "14px",
+                }}
+            >
+                使用3D立方体展示核心技术栈，增强视觉吸引力
+            </p>
+        </div>
+    );
+};
+
+export default ApplicationDemo;
+```
+
+## API 📚
+
+### CubeProps ⚙️
+
+| 属性             | 说明               | 类型                            | 默认值       | 版本 |
+| ---------------- | ------------------ | ------------------------------- | ------------ | ---- |
+| size             | 立方体尺寸（像素） | `number`                        | 100          | -    |
+| padding          | 容器内边距（像素） | `number`                        | 50           | -    |
+| autoRotate       | 是否自动旋转       | `boolean`                       | true         | -    |
+| customRenderFace | 自定义渲染面的函数 | `(face: CubeFace) => ReactNode` | 随机颜色方块 | -    |
+| rootClassName    | 根容器自定义类名   | `string`                        | -            | -    |
+| rotateClassName  | 旋转核心自定义类名 | `string`                        | -            | -    |
+
+### CubeFace 类型定义
+
+```typescript
+enum CubeFace {
+    Front = "front", // 前面
+    Back = "back", // 后面
+    Left = "left", // 左面
+    Right = "right", // 右面
+    Top = "top", // 上面
+    Bottom = "bottom", // 下面
+}
+```
+
+:::tip
+
+- 立方体包含6个面，每个面都可以单独渲染
+- `customRenderFace` 函数接收 `CubeFace` 参数，返回对应面的内容
+- 默认渲染为随机颜色的方块
+
+:::
